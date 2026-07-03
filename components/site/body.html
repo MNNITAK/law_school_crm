@@ -1,0 +1,439 @@
+<a href="#programs" class="skip">Skip to main content</a>
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<nav class="dot-rail" id="dotRail" aria-label="Section navigation">
+  <a href="#top" data-label="Home" class="active"></a>
+  <a href="#about" data-label="About"></a>
+  <a href="#programs" data-label="Programmes"></a>
+  <a href="#eligibility" data-label="Eligibility"></a>
+  <a href="#outcomes" data-label="Outcomes"></a>
+  <a href="#campus-life" data-label="Campus"></a>
+  <a href="#visit" data-label="Visit"></a>
+</nav>
+
+<!-- HEADER -->
+<header id="hdr">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="City Law College, Lucknow — home">
+      <svg class="crest" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 2l20 9v12c0 12-8.5 20-20 23C12.5 43 4 35 4 23V11l20-9z" stroke="#caa450" stroke-width="1.6"/><path d="M24 10l11 5v8c0 7-4.7 11.5-11 13.5C17.7 34.5 13 30 13 23v-8l11-5z" fill="rgba(202,164,80,.12)"/><path d="M24 16v14M17 23h14" stroke="#caa450" stroke-width="1.5"/><circle cx="24" cy="15" r="2" fill="#caa450"/></svg>
+      <span class="brand-txt"><b>City Law College</b><span>Lucknow · Affiliated to Univ. of Lucknow</span></span>
+    </a>
+    <nav class="menu" aria-label="Primary">
+      <a href="#about">About</a><a href="#programs">Programmes</a><a href="#eligibility">Eligibility</a>
+      <a href="#outcomes">Outcomes</a><a href="#campus-life">Campus Life</a><a href="#visit">Visit</a>
+      <a href="/first-case">First Case</a><a href="/precedents">Precedents</a><a href="/voice">Voice Call</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-gold nav-cta" onclick="openModal()">Apply 2026–27</button>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE MENU (a real menu — replaces the old burger that opened the chatbot) -->
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile" aria-hidden="true">
+  <a href="#about" onclick="closeMenu()">About <span>→</span></a>
+  <a href="#programs" onclick="closeMenu()">Programmes <span>→</span></a>
+  <a href="#eligibility" onclick="closeMenu()">Eligibility <span>→</span></a>
+  <a href="#outcomes" onclick="closeMenu()">Outcomes <span>→</span></a>
+  <a href="#campus-life" onclick="closeMenu()">Campus Life <span>→</span></a>
+  <a href="#visit" onclick="closeMenu()">Visit <span>→</span></a>
+  <a href="/first-case" onclick="closeMenu()">The First Case <span>→</span></a>
+  <a href="/precedents" onclick="closeMenu()">Precedent Engine <span>→</span></a>
+  <a href="/voice" onclick="closeMenu()">Talk to Aria — Voice <span>→</span></a>
+  <div class="mm-cta">
+    <button class="btn btn-gold" onclick="closeMenu();openModal()">Apply for 2026–27</button>
+    <button class="btn btn-ghost" onclick="closeMenu();openAI()">Ask Aria — AI counsellor</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg">
+    <!-- ▼ PREMIUM HERO PHOTO ▼ Clean, bright, full-bleed. Swap src for the college's own campus photo (e.g. "campus.jpg"). -->
+    <img class="hero-photo" id="heroPhoto" width="1600" height="1067" fetchpriority="high" decoding="async" src="https://images.unsplash.com/photo-1592280771190-3e2e4d571952?q=80&w=1600&auto=format&fit=crop" alt="" onerror="heroFallback(this)" />
+  </div>
+
+  <div class="hero-top-strip wrap">
+    <div class="trust-row anim d1">
+      <span class="pill"><svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l2 4 4 .5-3 3 .8 4L8 14l-3.8 2.5.8-4-3-3 4-.5L8 1z" fill="#caa450"/></svg> University of Lucknow · Code 1238</span>
+      <span class="pill">City Group of Colleges</span>
+      <span class="pill">Sector 9, Jankipuram Vistar</span>
+    </div>
+  </div>
+
+  <div class="hero-inner"><div class="wrap hero-centered">
+    <span class="eyebrow light anim d2">Established for the pursuit of justice</span>
+    <h1 class="anim d3">Where Conviction<br>Becomes <em>Counsel.</em></h1>
+    <p class="lead anim d4">At City Law College, Lucknow, future advocates are forged — through living moot courts, a real legal-aid clinic, and the enduring weight of a University of Lucknow degree.</p>
+    <div class="hero-cta anim d5">
+      <button class="btn btn-gold" onclick="openModal()">Begin Your Application
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="#15110a" stroke-width="1.7"/></svg></button>
+      <button class="btn btn-ghost" onclick="openAI()">Meet Aria — your AI counsellor</button>
+    </div>
+    <div class="hero-note anim d5"><span class="pulse"></span> Admissions open for 2026–27 · 240 seats · Merit-based</div>
+  </div></div>
+  <div class="scroll-hint" aria-hidden="true"><div class="mouse"></div><span>Scroll</span></div>
+</section>
+
+<section class="stats"><div class="wrap"><div class="stats-grid">
+  <div class="stat"><div class="num" data-count="240">0</div><div class="lbl">Seats / Year</div></div>
+  <div class="stat"><div class="num" data-count="2">0</div><div class="lbl">Law Programmes</div></div>
+  <div class="stat"><div class="num" data-count="1238">0</div><div class="lbl">LU College Code</div></div>
+  <div class="stat"><div class="num" data-count="100" data-suffix="%">0</div><div class="lbl">Merit-Based Intake</div></div>
+</div></div></section>
+
+<!-- INFINITE MAXIM MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item"><span>⚖</span> Fiat justitia ruat caelum</span>
+    <span class="marquee-item"><span>§</span> Audi alteram partem</span>
+    <span class="marquee-item"><span>⚖</span> Lex semper dabit remedium</span>
+    <span class="marquee-item"><span>§</span> Ignorantia juris non excusat</span>
+    <span class="marquee-item"><span>⚖</span> Justitia omnibus</span>
+    <span class="marquee-item"><span>§</span> Pro bono publico</span>
+    <span class="marquee-item"><span>⚖</span> Fiat justitia ruat caelum</span>
+    <span class="marquee-item"><span>§</span> Audi alteram partem</span>
+    <span class="marquee-item"><span>⚖</span> Lex semper dabit remedium</span>
+    <span class="marquee-item"><span>§</span> Ignorantia juris non excusat</span>
+    <span class="marquee-item"><span>⚖</span> Justitia omnibus</span>
+    <span class="marquee-item"><span>§</span> Pro bono publico</span>
+  </div>
+</div>
+
+<!-- CREED BAND — the relocated 3D scales of justice -->
+<section class="sec creed-band" id="creed"><div class="wrap creed-grid-layout">
+  <div class="creed-copy reveal">
+    <span class="eyebrow light">Our Creed</span>
+    <h2>The balance we teach<br>students to keep.</h2>
+    <p>Every advocate learns that the law is a weighing — of fact against fact, of right against right. It is the discipline at the heart of everything taught here, from the first lecture to the final moot.</p>
+    <div class="creed-tags">
+      <span>Reasoned judgement</span><span>Ethical practice</span><span>Service before self</span>
+    </div>
+  </div>
+  <div class="creed-stage reveal" aria-hidden="true">
+    <div class="halo"></div>
+    <svg class="scales" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="goldC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecd9a8"/><stop offset="0.5" stop-color="#caa450"/><stop offset="1" stop-color="#a87f2d"/></linearGradient></defs>
+      <rect x="132" y="276" width="56" height="14" rx="4" fill="url(#goldC)"/>
+      <rect x="146" y="282" width="28" height="8" rx="3" fill="#a87f2d"/>
+      <rect x="156" y="78" width="8" height="204" rx="4" fill="url(#goldC)"/>
+      <circle cx="160" cy="74" r="9" fill="url(#goldC)"/>
+      <g class="beam">
+        <rect x="56" y="70" width="208" height="7" rx="3.5" fill="url(#goldC)"/>
+        <circle cx="60" cy="73.5" r="6" fill="url(#goldC)"/><circle cx="260" cy="73.5" r="6" fill="url(#goldC)"/>
+        <g class="pan"><line x1="60" y1="76" x2="36" y2="150" stroke="#caa450" stroke-width="2"/><line x1="60" y1="76" x2="84" y2="150" stroke="#caa450" stroke-width="2"/><path d="M24 150 q36 44 72 0 z" fill="url(#goldC)" opacity="0.92"/><ellipse cx="60" cy="150" rx="36" ry="7" fill="#ecd9a8" opacity="0.5"/></g>
+        <g class="pan"><line x1="260" y1="76" x2="236" y2="150" stroke="#caa450" stroke-width="2"/><line x1="260" y1="76" x2="284" y2="150" stroke="#caa450" stroke-width="2"/><path d="M224 150 q36 44 72 0 z" fill="url(#goldC)" opacity="0.92"/><ellipse cx="260" cy="150" rx="36" ry="7" fill="#ecd9a8" opacity="0.5"/></g>
+      </g>
+    </svg>
+    <span class="law-pop p1">⚖ Justitia</span>
+    <span class="law-pop p2">Audi Alteram Partem</span>
+    <span class="law-pop p3">§ Moot Court</span>
+    <span class="law-pop p4">Pro Bono Publico</span>
+  </div>
+</div></section>
+
+<!-- ABOUT -->
+<section class="sec" id="about"><div class="wrap about-grid">
+  <div class="about-imgs reveal">
+    <img class="a1" loading="lazy" decoding="async" width="900" height="1200" src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=900&auto=format&fit=crop" alt="Law students on campus" onerror="imgFail(this)" data-label="Our Students" />
+    <img class="a2" loading="lazy" decoding="async" width="900" height="900" src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=900&auto=format&fit=crop" alt="College building" onerror="imgFail(this)" data-label="Campus" />
+    <div class="badge-est"><b>LU</b><span>Affiliated College</span></div>
+  </div>
+  <div class="about-body reveal">
+    <span class="eyebrow">About the College</span>
+    <p class="lead-line" style="margin-top:14px">A house of advocacy in the heart of Jankipuram Vistar — part of the respected City Group of Colleges.</p>
+    <p>City Law College is affiliated to the <b>University of Lucknow</b> (College Code 1238) and offers the 5-year integrated BA LL.B (Hons.) and the 3-year LL.B. On the AKTU–CDRI Road in Sector 9, the campus pairs serious academics with a culture of practice — moot courts, a legal-aid clinic and structured internships across Lucknow's chambers and courts.</p>
+    <div class="cred-grid">
+      <div class="cred"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l9 4-9 4-9-4 9-4z" stroke="#a87f2d" stroke-width="1.5"/><path d="M5 10v5c0 2 3.5 4 7 4s7-2 7-4v-5" stroke="#a87f2d" stroke-width="1.5"/></svg><div><b>Dr. Shiv Bahadur Tiwari</b><span>Principal</span></div></div>
+      <div class="cred"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z" stroke="#a87f2d" stroke-width="1.5"/></svg><div><b>Dr. Mamta Srivastava</b><span>Manager</span></div></div>
+      <div class="cred"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#a87f2d" stroke-width="1.5"/><path d="M12 7v5l3 2" stroke="#a87f2d" stroke-width="1.5"/></svg><div><b>5 & 3 Year Tracks</b><span>BA LL.B &amp; LL.B</span></div></div>
+      <div class="cred"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s-7-6.5-7-11a7 7 0 1114 0c0 4.5-7 11-7 11z" stroke="#a87f2d" stroke-width="1.5"/></svg><div><b>Jankipuram Vistar</b><span>Sector 9, near AKTU</span></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- PROGRAMS -->
+<section class="sec bg-cream" id="programs"><div class="wrap">
+  <div class="sec-head reveal"><span class="eyebrow">Our Programmes</span><h2>Two paths into the profession of law</h2><p>Both programmes are merit-based and governed by the ordinances of the University of Lucknow.</p></div>
+  <div class="prog-grid">
+    <div class="prog tilt reveal" data-tilt><div class="tilt-glare"></div>
+      <div class="ph"><img loading="lazy" decoding="async" width="1000" height="667" src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1000&auto=format&fit=crop" alt="Classroom" onerror="imgFail(this)" data-label="BA LL.B"><span class="dur">5-Year Integrated · After Class 12</span></div>
+      <div class="bd"><h3>BA LL.B (Hons.)</h3><p class="sub">Enter law directly after Class 12 with a humanities foundation built in.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5" stroke="#a87f2d" stroke-width="2" fill="none"/></svg><span><b>Eligibility:</b> 10+2 with min. 45% (40% SC/ST)</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5" stroke="#a87f2d" stroke-width="2" fill="none"/></svg><span><b>Intake:</b> 120 seats · Merit-based</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5" stroke="#a87f2d" stroke-width="2" fill="none"/></svg><span><b>Includes:</b> Arts core + full law curriculum + internships</span></li>
+        </ul>
+        <button class="btn btn-dark" onclick="openModal('ballb')">Apply for BA LL.B</button>
+      </div>
+    </div>
+    <div class="prog tilt reveal" data-tilt><div class="tilt-glare"></div>
+      <div class="ph"><img loading="lazy" decoding="async" width="1000" height="667" src="https://images.unsplash.com/photo-1589994965851-a8f479c573a9?q=80&w=1000&auto=format&fit=crop" alt="Law books" onerror="imgFail(this)" data-label="LL.B"><span class="dur">3-Year · Graduate Entry</span></div>
+      <div class="bd"><h3>LL.B</h3><p class="sub">For graduates of any discipline ready to commit fully to the law.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5" stroke="#a87f2d" stroke-width="2" fill="none"/></svg><span><b>Eligibility:</b> Graduation with min. 50%</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5" stroke="#a87f2d" stroke-width="2" fill="none"/></svg><span><b>Intake:</b> 120 seats · Merit-based</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5" stroke="#a87f2d" stroke-width="2" fill="none"/></svg><span><b>Includes:</b> Moot court, legal-aid clinic, bar-exam prep</span></li>
+        </ul>
+        <button class="btn btn-dark" onclick="openModal('llb')">Apply for LL.B</button>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ELIGIBILITY -->
+<section class="sec" id="eligibility"><div class="wrap">
+  <div class="checker reveal spotlight"><div class="checker-grid">
+    <div>
+      <span class="eyebrow light">Instant Eligibility</span>
+      <h3 style="margin-top:14px">Will you get in? Find out now.</h3>
+      <p>Most students never apply because they're unsure. Remove the doubt in seconds — then let Aria guide your next step.</p>
+      <div class="field"><label id="lblCourse">Programme</label><div class="seg" id="segCourse" role="group" aria-labelledby="lblCourse"><button class="on" data-v="ballb" onclick="segPick(this,'cCourse')">BA LL.B (5 yr)</button><button data-v="llb" onclick="segPick(this,'cCourse')">LL.B (3 yr)</button></div><input type="hidden" id="cCourse" value="ballb"></div>
+      <div class="field"><label for="cMarks">Qualifying marks (%)</label><input id="cMarks" type="number" placeholder="Enter your percentage" min="0" max="100" /></div>
+      <div class="field"><label id="lblCat">Category</label><div class="seg" id="segCat" role="group" aria-labelledby="lblCat"><button class="on" data-v="gen" onclick="segPick(this,'cCat')">General / OBC / EWS</button><button data-v="res" onclick="segPick(this,'cCat')">SC / ST</button></div><input type="hidden" id="cCat" value="gen"></div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="fullCheck()">Reveal my result</button>
+    </div>
+    <div class="check-result" id="cResult" aria-live="polite"><div class="placeholder">Your personalised eligibility result will appear here →</div></div>
+  </div></div>
+</div></section>
+
+<!-- OUTCOMES + VOICES (NEW — social proof the original lacked) -->
+<section class="sec bg-cream" id="outcomes"><div class="wrap">
+  <div class="sec-head reveal"><span class="eyebrow">Outcomes &amp; Voices</span><h2>Where a degree here can take you</h2><p>Law opens many doors — courtrooms, corporate chambers, civil services, judiciary and beyond. Here's the shape of the journey our students pursue.</p></div>
+  <div class="out-grid">
+    <div class="out-card reveal"><div class="on">7+</div><div class="ol">Career tracks — litigation, corporate, judiciary, civil services, academia &amp; more</div></div>
+    <div class="out-card reveal"><div class="on">52+</div><div class="ol">Weekly moot-court &amp; clinic hours building real courtroom instinct</div></div>
+    <div class="out-card reveal"><div class="on">24/7</div><div class="ol">Admissions support via Aria &amp; WhatsApp — questions answered in seconds</div></div>
+    <div class="out-card reveal"><div class="on">100%</div><div class="ol">Merit-based, transparent intake under University of Lucknow ordinances</div></div>
+  </div>
+  <div class="voices">
+    <figure class="voice reveal">
+      <p>The moot court changed everything for me. By second year I'd argued in front of practising advocates — that confidence is something no textbook gives you.</p>
+      <figcaption class="who"><span class="av">AR</span><span><b>Aarav R.</b><span>BA LL.B (Hons.), 4th year</span></span></figcaption>
+    </figure>
+    <figure class="voice reveal">
+      <p>I came in nervous about my marks. The faculty cared more about how I think than my percentage. The legal-aid clinic is where I found my reason to study law.</p>
+      <figcaption class="who"><span class="av">SK</span><span><b>Sneha K.</b><span>LL.B, alumna</span></span></figcaption>
+    </figure>
+    <figure class="voice reveal">
+      <p>Internships across Lucknow's courts and chambers were arranged for us properly. You graduate already knowing how a real case file moves.</p>
+      <figcaption class="who"><span class="av">MV</span><span><b>Mohit V.</b><span>BA LL.B (Hons.), final year</span></span></figcaption>
+    </figure>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:.78rem;margin-top:30px">Student voices shown are illustrative for this concept demo and can be replaced with verified testimonials.</p>
+</div></section>
+
+<!-- CAMPUS LIFE -->
+<section class="sec" id="campus-life"><div class="wrap">
+  <div class="sec-head reveal"><span class="eyebrow">Campus Life</span><h2>A campus that teaches by doing</h2><p>From the moot court to the library to the legal-aid desk — law here is lived, not just read.</p></div>
+  <div class="gal reveal">
+    <figure class="big"><img loading="lazy" decoding="async" width="1200" height="800" src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1200&auto=format&fit=crop" alt="Moot court session" onerror="imgFail(this)" data-label="Moot Court"><figcaption>Moot Court — trials judged by practising advocates</figcaption></figure>
+    <figure><img loading="lazy" decoding="async" width="800" height="600" src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=800&auto=format&fit=crop" alt="Law library" onerror="imgFail(this)" data-label="Library"><figcaption>Law Library</figcaption></figure>
+    <figure class="tall"><img loading="lazy" decoding="async" width="800" height="1000" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop" alt="Seminar" onerror="imgFail(this)" data-label="Seminars"><figcaption>Seminars &amp; Guest Lectures</figcaption></figure>
+    <figure><img loading="lazy" decoding="async" width="800" height="600" src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?q=80&w=800&auto=format&fit=crop" alt="Computer centre" onerror="imgFail(this)" data-label="Computer Centre"><figcaption>AC Computer Centre</figcaption></figure>
+    <figure><img loading="lazy" decoding="async" width="800" height="600" src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800&auto=format&fit=crop" alt="Legal aid clinic" onerror="imgFail(this)" data-label="Legal-Aid Clinic"><figcaption>Legal-Aid Clinic</figcaption></figure>
+  </div>
+</div></section>
+
+<!-- FACILITIES -->
+<section class="sec bg-cream"><div class="wrap">
+  <div class="sec-head reveal"><span class="eyebrow">Facilities</span><h2>Everything a serious law student needs</h2></div>
+  <div class="fac-grid">
+    <div class="fac tilt reveal" data-tilt><div class="tilt-glare"></div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h7v16H4zM13 4h7v16h-7z" stroke="#caa450" stroke-width="1.5"/></svg></div><div><b>Law Library</b><span>Extensive collection supporting teaching &amp; research.</span></div></div>
+    <div class="fac tilt reveal" data-tilt><div class="tilt-glare"></div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 21v-2a4 4 0 014-4h8a4 4 0 014 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="#caa450" stroke-width="1.5"/></svg></div><div><b>Moot Court Hall</b><span>Weekly mock trials that build courtroom instinct.</span></div></div>
+    <div class="fac tilt reveal" data-tilt><div class="tilt-glare"></div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1" stroke="#caa450" stroke-width="1.5"/><path d="M8 20h8" stroke="#caa450" stroke-width="1.5"/></svg></div><div><b>AC Computer Centre</b><span>Air-conditioned lab on a LAN to a central server.</span></div></div>
+    <div class="fac tilt reveal" data-tilt><div class="tilt-glare"></div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 2v6a6 6 0 0012 0V2M6 22h12" stroke="#caa450" stroke-width="1.5"/></svg></div><div><b>Multi-Cuisine Cafeteria</b><span>Hygienic, spacious cafeteria serving breakfast &amp; lunch.</span></div></div>
+    <div class="fac tilt reveal" data-tilt><div class="tilt-glare"></div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14" stroke="#caa450" stroke-width="1.5"/></svg></div><div><b>Hostel &amp; Guest House</b><span>Residential facilities plus a visitor waiting room.</span></div></div>
+    <div class="fac tilt reveal" data-tilt><div class="tilt-glare"></div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v20M5 6h14M5 6l-2 8h4L5 6zm14 0l-2 8h4l-2-8z" stroke="#caa450" stroke-width="1.5"/></svg></div><div><b>Training &amp; Placement Cell</b><span>Internships, soft-skills training and placement support.</span></div></div>
+  </div>
+</div></section>
+
+<!-- AI AUTOMATION / WHATSAPP -->
+<section class="sec auto-band" id="automation"><div class="wrap">
+  <div class="sec-head reveal"><span class="eyebrow">For the Admissions Office</span><h2>One AI brain. Four engines. Zero leads lost.</h2><p>Aria greets every visitor on the website. Everything she learns flows into a live CRM the college controls — and four automation engines turn passive traffic into enrolled students. Tap any engine below to watch a live demo.</p></div>
+  <div class="auto-grid">
+    <div class="flow reveal">
+      <div class="flow-step"><div class="n">1</div><div><b>Capture</b><span>Aria greets and helps every visitor, gently collecting name, phone and interest.</span></div></div>
+      <div class="flow-step"><div class="n">2</div><div><b>Understand</b><span>The CRM reads emotion, journey stage and readiness, tagging each lead Cold, Warm or Hot.</span></div></div>
+      <div class="flow-step"><div class="n">3</div><div><b>Nurture</b><span>Warm leads get friendly, automatic WhatsApp follow-up so they never go cold.</span></div></div>
+      <div class="flow-step"><div class="n">4</div><div><b>Close</b><span>Only genuinely hot, qualified leads reach a human counsellor — ready to enrol.</span></div></div>
+    </div>
+    <div class="reveal" style="text-align:center">
+      <div style="background:#fff;border:1px solid var(--line);border-radius:24px;padding:34px;box-shadow:var(--shadow)">
+        <div style="font-family:var(--serif);font-size:3.4rem;color:var(--burgundy);line-height:1">≈10×</div>
+        <p style="color:var(--muted);margin:6px 0 18px">more admissions from the <i>same</i> traffic — by capturing every lead, replying in seconds, keeping leads warm, and sending only ready students to your team.</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <span class="pill" style="background:var(--cream);border:1px solid var(--line);color:var(--ink);padding:7px 14px;border-radius:50px;font-size:.78rem">⏱️ Seconds, 24/7</span>
+          <span class="pill" style="background:var(--cream);border:1px solid var(--line);color:var(--ink);padding:7px 14px;border-radius:50px;font-size:.78rem">🧠 Reads emotion</span>
+          <span class="pill" style="background:var(--cream);border:1px solid var(--line);color:var(--ink);padding:7px 14px;border-radius:50px;font-size:.78rem">🔥 Auto-qualifies</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modules-head reveal"><span class="eyebrow">Four Buildable Modules · Live Demos</span><h3>See each engine actually run</h3></div>
+  <div class="module-grid">
+    <button class="module-card tilt reveal" data-tilt onclick="openDemo('lead')"><div class="tilt-glare"></div>
+      <div class="mc-top"><span class="mc-no">01</span><span class="mc-play">▶ Live demo</span></div>
+      <div class="mc-ic">🎯</div>
+      <b>Lead Qualification Engine</b>
+      <span>A conversation becomes a sorted, prioritised pipeline — scored live, with hot leads routed straight to a counsellor's phone.</span>
+    </button>
+    <button class="module-card tilt reveal" data-tilt onclick="openWA()"><div class="tilt-glare"></div>
+      <div class="mc-top"><span class="mc-no">02</span><span class="mc-play">▶ Live demo</span></div>
+      <div class="mc-ic">💬</div>
+      <b>WhatsApp Drip Automation</b>
+      <span>The moment a number is shared, an AI WhatsApp sequence begins — eligibility, success story, campus-visit invite.</span>
+    </button>
+    <button class="module-card tilt reveal" data-tilt onclick="openDemo('parent')"><div class="tilt-glare"></div>
+      <div class="mc-top"><span class="mc-no">03</span><span class="mc-play">▶ Live demo</span></div>
+      <div class="mc-ic">👪</div>
+      <b>Parent-Aware Nurture</b>
+      <span>The AI detects a parent's tone and switches to a formal, ROI-focused script — speaking to the real decision-maker.</span>
+    </button>
+    <button class="module-card tilt reveal" data-tilt onclick="openDemo('crm')"><div class="tilt-glare"></div>
+      <div class="mc-top"><span class="mc-no">04</span><span class="mc-play">▶ Live demo</span></div>
+      <div class="mc-ic">📊</div>
+      <b>CRM with AI Follow-Up Scoring</b>
+      <span>Every lead gets a live AI score from engagement signals, so counsellors focus only on the top ~20%.</span>
+    </button>
+  </div>
+</div></section>
+
+<!-- VISIT -->
+<section class="sec bg-ink spotlight" id="visit"><div class="wrap">
+  <div class="sec-head reveal"><span class="eyebrow light">Visit Us</span><h2>Find us in Sector 9, Jankipuram Vistar</h2><p>On the AKTU–CDRI Road, near AKTU. The best way to choose a college is to walk its corridors.</p></div>
+  <div class="campus-grid">
+    <div class="reveal">
+      <div class="addr-line"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s-7-6.5-7-11a7 7 0 1114 0c0 4.5-7 11-7 11z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg></div><div><b>City Law College</b><span>Sector 9, Jankipuram Vistar, AKTU–CDRI Road, Lucknow, UP 226021</span></div></div>
+      <div class="addr-line"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L20 13l2 5v2a2 2 0 01-2 2A16 16 0 014 6a2 2 0 011-2z" stroke="currentColor" stroke-width="1.6"/></svg></div><div><b>Admissions Helpline</b><span>+91 81770 01081 · Principal: +91 93696 38650</span></div></div>
+      <div class="addr-line"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18v12H3z" stroke="currentColor" stroke-width="1.6"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.6"/></svg></div><div><b>Email</b><span>info@cgclko.com</span></div></div>
+      <div class="social-row">
+        <a href="https://wa.me/918177001081" target="_blank" rel="noopener" aria-label="WhatsApp"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2zm5.8 14.2c-.2.7-1.2 1.3-1.7 1.4-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.9-4.6-4.1-.1-.2-1-1.4-1-2.6s.6-1.8.9-2.1c.2-.2.5-.3.6-.3h.5c.2 0 .4 0 .5.4l.7 1.7c.1.1.1.3 0 .5l-.3.5c-.1.2-.3.3-.1.6.1.2.6 1 1.3 1.6.9.8 1.6 1 1.9 1.2.2.1.4.1.5-.1l.6-.7c.2-.2.3-.2.5-.1l1.6.8c.2.1.4.2.4.3.1.1.1.5 0 .9z"/></svg></a>
+        <a href="#" rel="noopener" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></a>
+        <a href="#" rel="noopener" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8h2V5h-2c-2 0-3 1.3-3 3.2V10H9v3h2v8h3v-8h2.2l.5-3H14V8.4c0-.3.2-.4.5-.4z"/></svg></a>
+        <a href="#" rel="noopener" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 8.2a3 3 0 00-2-2C18 5.7 12 5.7 12 5.7s-6 0-8 .5a3 3 0 00-2 2C1.7 10 1.7 12 1.7 12s0 2 .3 3.8a3 3 0 002 2c2 .5 8 .5 8 .5s6 0 8-.5a3 3 0 002-2c.3-1.8.3-3.8.3-3.8s0-2-.3-3.8zM10 15V9l5 3-5 3z"/></svg></a>
+        <a href="#" rel="noopener" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 8A1.5 1.5 0 116.5 5a1.5 1.5 0 010 3zM5 9.5h3V19H5zM10.5 9.5h2.8v1.3h.05c.4-.7 1.4-1.5 2.9-1.5 3.1 0 3.7 2 3.7 4.6V19h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3V19h-3z"/></svg></a>
+      </div>
+      <a class="btn btn-gold" style="margin-top:24px" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=City+Law+College+Sector+9+Jankipuram+Vistar+Lucknow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8-8-2z" stroke="#15110a" stroke-width="1.8"/></svg> Get directions on Google Maps</a>
+    </div>
+    <div class="map-frame reveal"><iframe title="Map to City Law College, Lucknow" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=City+Law+College+Sector+9+Jankipuram+Vistar+Lucknow+Uttar+Pradesh&output=embed"></iframe></div>
+  </div>
+</div></section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap">
+  <h2 class="reveal">Your seat for 2026–27 won't wait.</h2>
+  <p class="reveal">Applications are reviewed on a rolling, merit basis. The earlier you apply, the stronger your standing.</p>
+  <div class="btnrow reveal"><button class="btn btn-gold" onclick="openModal()">Start your application</button><button class="btn btn-ghost" onclick="openAI()">Ask Aria anything first</button></div>
+</div></section>
+
+<!-- FOOTER -->
+<footer><div class="wrap">
+  <div class="foot-grid">
+    <div>
+      <div class="brand" style="margin-bottom:16px"><svg class="crest" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 2l20 9v12c0 12-8.5 20-20 23C12.5 43 4 35 4 23V11l20-9z" stroke="#caa450" stroke-width="1.6"/><path d="M24 16v14M17 23h14" stroke="#caa450" stroke-width="1.5"/></svg><span class="brand-txt"><b>City Law College</b><span>Lucknow</span></span></div>
+      <p style="max-width:280px">Affiliated to the University of Lucknow (Code 1238). Part of the City Group of Colleges.</p>
+      <div class="foot-social">
+        <a href="https://wa.me/918177001081" aria-label="WhatsApp"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2zm5.8 14.2c-.2.7-1.2 1.3-1.7 1.4-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.9-4.6-4.1-.1-.2-1-1.4-1-2.6s.6-1.8.9-2.1c.2-.2.5-.3.6-.3h.5c.2 0 .4 0 .5.4l.7 1.7c.1.1.1.3 0 .5l-.3.5c-.1.2-.3.3-.1.6.1.2.6 1 1.3 1.6.9.8 1.6 1 1.9 1.2.2.1.4.1.5-.1l.6-.7c.2-.2.3-.2.5-.1l1.6.8c.2.1.4.2.4.3.1.1.1.5 0 .9z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8h2V5h-2c-2 0-3 1.3-3 3.2V10H9v3h2v8h3v-8h2.2l.5-3H14V8.4c0-.3.2-.4.5-.4z"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 8.2a3 3 0 00-2-2C18 5.7 12 5.7 12 5.7s-6 0-8 .5a3 3 0 00-2 2C1.7 10 1.7 12 1.7 12s0 2 .3 3.8a3 3 0 002 2c2 .5 8 .5 8 .5s6 0 8-.5a3 3 0 002-2c.3-1.8.3-3.8.3-3.8s0-2-.3-3.8zM10 15V9l5 3-5 3z"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 8A1.5 1.5 0 116.5 5a1.5 1.5 0 010 3zM5 9.5h3V19H5zM10.5 9.5h2.8v1.3h.05c.4-.7 1.4-1.5 2.9-1.5 3.1 0 3.7 2 3.7 4.6V19h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3V19h-3z"/></svg></a>
+      </div>
+    </div>
+    <div><h5>Programmes</h5><a href="#programs">BA LL.B (Hons.)</a><a href="#programs">LL.B</a><a href="#eligibility">Check eligibility</a></div>
+    <div><h5>Explore</h5><a href="#about">About</a><a href="#outcomes">Outcomes</a><a href="#campus-life">Campus Life</a><a href="#visit">Visit Us</a><a href="/first-case">The First Case</a><a href="/precedents">Precedent Engine</a><a href="/voice">Voice Counsel</a></div>
+    <div><h5>Contact</h5><a href="#visit">Sector 9, Jankipuram Vistar</a><a href="tel:+918177001081">+91 81770 01081</a><a href="mailto:info@cgclko.com">info@cgclko.com</a></div>
+  </div>
+  <div class="foot-bottom"><span>© 2026 City Law College, Lucknow · Affiliated to University of Lucknow · Code 1238</span><span style="color:rgba(255,255,255,.4)">Trial prototype build</span></div>
+</div></footer>
+
+<!-- FLOATING STACK -->
+<div class="fab-stack" id="fabStack">
+  <a class="fab-mini x" href="#" target="_blank" rel="noopener" aria-label="X"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 3h3l-7 8 8 10h-6l-5-6-5 6H2l8-9L2 3h6l4 5 5-5z"/></svg></a>
+  <a class="fab-mini li" href="#" target="_blank" rel="noopener" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 8A1.5 1.5 0 116.5 5a1.5 1.5 0 010 3zM5 9.5h3V19H5zM10.5 9.5h2.8v1.3h.05c.4-.7 1.4-1.5 2.9-1.5 3.1 0 3.7 2 3.7 4.6V19h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3V19h-3z"/></svg></a>
+  <a class="fab-mini yt" href="#" target="_blank" rel="noopener" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 8.2a3 3 0 00-2-2C18 5.7 12 5.7 12 5.7s-6 0-8 .5a3 3 0 00-2 2C1.7 10 1.7 12 1.7 12s0 2 .3 3.8a3 3 0 002 2c2 .5 8 .5 8 .5s6 0 8-.5a3 3 0 002-2c.3-1.8.3-3.8.3-3.8s0-2-.3-3.8zM10 15V9l5 3-5 3z"/></svg></a>
+  <a class="fab-mini fb" href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8h2V5h-2c-2 0-3 1.3-3 3.2V10H9v3h2v8h3v-8h2.2l.5-3H14V8.4c0-.3.2-.4.5-.4z"/></svg></a>
+  <a class="fab-mini ig" href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></a>
+  <button class="fab-toggle" aria-label="Follow us on social media" onclick="document.getElementById('fabStack').classList.toggle('open')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2"/></svg></button>
+  <a class="wa" href="https://wa.me/918177001081?text=Hi%2C%20I%20want%20to%20know%20about%20admission%20at%20City%20Law%20College" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2zm5.8 14.2c-.2.7-1.2 1.3-1.7 1.4-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.9-4.6-4.1-.1-.2-1-1.4-1-2.6s.6-1.8.9-2.1c.2-.2.5-.3.6-.3h.5c.2 0 .4 0 .5.4l.7 1.7c.1.1.1.3 0 .5l-.3.5c-.1.2-.3.3-.1.6.1.2.6 1 1.3 1.6.9.8 1.6 1 1.9 1.2.2.1.4.1.5-.1l.6-.7c.2-.2.3-.2.5-.1l1.6.8c.2.1.4.2.4.3.1.1.1.5 0 .9z"/></svg></a>
+</div>
+
+<!-- BACK TO TOP -->
+<button class="to-top" id="toTop" aria-label="Back to top" onclick="scrollTo({top:0,behavior:'smooth'})"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+<!-- AI FAB -->
+<button class="ai-fab" id="aiFab" onclick="openAI()" aria-label="Open Aria, AI admissions counsellor">
+  <div class="nudge" id="aiNudge">Hi! 👋 Curious about admission? Tap me.</div>
+  <div class="orb" aria-hidden="true"></div><div style="text-align:left"><b>Ask Aria</b><small>AI Admissions Counsellor</small></div>
+</button>
+
+<!-- iOS AI PANEL -->
+<div class="ai-panel" id="aiPanel" role="dialog" aria-modal="true" aria-label="Aria, AI admissions counsellor">
+  <div class="ai-main">
+    <div class="ai-top">
+      <div class="ai-grab" aria-hidden="true"></div>
+      <button class="crmbtn" onclick="toggleCRM()" aria-label="Toggle counsellor CRM view">▦</button>
+      <button class="x" onclick="closeAI()" aria-label="Close chat">✕</button>
+      <div class="ai-id"><div class="av" aria-hidden="true"></div><b>Aria</b><small>Admissions Counsellor · online</small></div>
+    </div>
+    <div class="ai-log" id="aiLog" role="log" aria-live="polite"></div>
+    <div class="ai-cards" id="aiCards"></div>
+    <div class="ai-input">
+      <button class="mic" id="micBtn" onclick="toggleMic()" aria-label="Speak your message"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M5 11a7 7 0 0014 0M12 18v3" stroke="currentColor" stroke-width="1.7"/></svg></button>
+      <input id="aiInput" placeholder="Type your message" aria-label="Type your message to Aria" onkeydown="if(event.key==='Enter')send()" />
+      <button class="ai-send" onclick="send()" aria-label="Send message"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </div>
+  <div class="crm" id="crm">
+    <h6><span class="pulse" style="width:7px;height:7px"></span> Live Counsellor CRM</h6>
+    <div class="crm-card"><div class="ttl">Lead Temperature</div><span class="temp-badge temp-cold" id="crmTemp">❄️ Cold</span><div class="wa-sync" id="waSync">✓ Queued for WhatsApp follow-up</div></div>
+    <div class="crm-card"><div class="ttl">Emotional Read</div><div class="mood"><span class="face" id="crmFace">🙂</span><span class="mlabel" id="crmMood">Neutral</span></div></div>
+    <div class="crm-card"><div class="ttl">Journey Stage</div><div style="display:flex;gap:6px"><div style="flex:1"><div class="stage-bar" id="st0"></div><div class="stage-dot">Aware</div></div><div style="flex:1"><div class="stage-bar" id="st1"></div><div class="stage-dot">Consider</div></div><div style="flex:1"><div class="stage-bar" id="st2"></div><div class="stage-dot">Decide</div></div></div></div>
+    <div class="crm-card"><div class="ttl">Admission Readiness</div><div class="ready-num"><span id="crmReady">0</span><span style="font-size:1rem">/100</span></div><div class="ready-bar"><div class="ready-fill" id="crmReadyBar"></div></div></div>
+    <div class="crm-card"><div class="ttl">Captured Lead</div><div class="lead-row"><span>Name</span><b id="ldName">—</b></div><div class="lead-row"><span>Phone</span><b id="ldPhone">—</b></div><div class="lead-row"><span>Interest</span><b id="ldCourse">—</b></div></div>
+    <div class="crm-card"><div class="ttl">Next Best Action</div><div class="nba" id="crmNBA">Greet warmly; surface the student's goal.</div></div>
+  </div>
+</div>
+
+<!-- WHATSAPP DEMO -->
+<div class="wamodal" id="wamodal" role="dialog" aria-modal="true" aria-label="WhatsApp follow-up demo">
+  <div class="phone">
+    <div class="wa-head"><span class="bk" aria-hidden="true">‹</span><div class="av" aria-hidden="true">CL</div><div><b>City Law College</b><small id="waStatus">online</small></div><button class="x" onclick="closeWA()" aria-label="Close demo">✕</button></div>
+    <div class="wa-body" id="waBody"></div>
+    <button class="wa-replay" id="waReplay" onclick="playWA()">↺ Replay</button>
+    <div class="wa-foot"><div class="ip">Message</div><div class="sn" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-3-6-7-2z" stroke="#fff" stroke-width="1.6"/></svg></div></div>
+  </div>
+</div>
+
+<!-- GENERIC LIVE-DEMO MODAL (Lead Qualification / Parent-Aware / CRM Scoring) -->
+<div class="demo-modal" id="demoModal" role="dialog" aria-modal="true" aria-label="Live module demo">
+  <div class="demo-shell" id="demoShell">
+    <div class="demo-stage">
+      <div class="demo-head">
+        <span class="tag" id="demoTag">Live Demo</span>
+        <h4 id="demoTitle">Module</h4>
+        <button class="x" onclick="closeDemo()" aria-label="Close demo">✕</button>
+      </div>
+      <div class="demo-feed" id="demoFeed"></div>
+      <button class="demo-replay" id="demoReplay" onclick="replayDemo()">↺ Replay this demo</button>
+    </div>
+    <div class="demo-side" id="demoSide"></div>
+  </div>
+</div>
+
+<!-- APPLY MODAL -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-card">
+  <div class="modal-head"><button class="x" onclick="closeModal()" aria-label="Close application form">✕</button><h3 id="modalTitle">Begin your application</h3><p>Under a minute. Our team reaches out within 24 hours.</p></div>
+  <div class="modal-body">
+    <div class="field"><label for="mName">Full name</label><input id="mName" placeholder="Your name" autocomplete="name" /></div>
+    <div class="field"><label for="mPhone">Mobile number</label><input id="mPhone" placeholder="10-digit mobile" inputmode="numeric" autocomplete="tel" /></div>
+    <div class="field"><label for="mCourse">Programme</label><select id="mCourse"><option value="BA LL.B (Hons.)">BA LL.B (Hons.) — 5 Year</option><option value="LL.B">LL.B — 3 Year</option></select></div>
+    <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="submitApp()">Submit application</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5" stroke="#34c759" stroke-width="2" fill="none"/></svg><span id="toastMsg">Saved</span></div>
+
