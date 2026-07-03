@@ -43,6 +43,8 @@ export function getDb(): Firestore | null {
     initializeApp({
       credential: cert(creds as Parameters<typeof cert>[0]),
     });
-  db = getFirestore(app);
+  // supports named databases (console sometimes creates "default" instead of "(default)")
+  const dbId = process.env.NEXT_PUBLIC_FIREBASE_DB_ID;
+  db = dbId ? getFirestore(app, dbId) : getFirestore(app);
   return db;
 }

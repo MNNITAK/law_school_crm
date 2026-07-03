@@ -31,5 +31,6 @@ export function clientAuth(): Auth {
 }
 
 export function clientDb(): Firestore {
-  return getFirestore(getApp());
+  const dbId = process.env.NEXT_PUBLIC_FIREBASE_DB_ID;
+  return dbId ? getFirestore(getApp(), dbId) : getFirestore(getApp());
 }
