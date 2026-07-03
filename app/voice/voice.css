@@ -1,0 +1,98 @@
+.vc-page {
+  min-height: 100vh;
+  background: radial-gradient(130% 100% at 80% 10%, #16344a, #0a1722 65%);
+  color: #f6f0e2;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  padding: 20px 22px 40px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.vc-page a { text-decoration: none; color: inherit; }
+.vc-nav { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 30px; flex-wrap: wrap; gap: 8px; }
+.vc-back { color: #caa450; font-size: 0.85rem; }
+.vc-kick { font-size: 0.66rem; letter-spacing: 0.3em; text-transform: uppercase; color: #caa450; }
+.vc-grid { display: grid; grid-template-columns: 380px 1fr; gap: 46px; align-items: start; }
+@media (max-width: 880px) { .vc-grid { grid-template-columns: 1fr; } .vc-phone { max-width: 380px; margin: 0 auto; } }
+
+.vc-phone {
+  position: relative;
+  background: linear-gradient(180deg, #0a1322, #070d18);
+  border: 1px solid rgba(202, 164, 80, 0.25);
+  border-radius: 30px;
+  padding: 26px 22px 22px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5);
+}
+.vc-notch { width: 120px; height: 6px; background: #26324a; border-radius: 6px; margin: 0 auto 22px; }
+.vc-callee { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.vc-av {
+  width: 78px; height: 78px; border-radius: 50%;
+  background: linear-gradient(140deg, #6b1f2a, #16344a);
+  display: flex; align-items: center; justify-content: center;
+  font-family: Fraunces, Georgia, serif; font-size: 30px; color: #caa450;
+  border: 1px solid rgba(202, 164, 80, 0.35);
+}
+.vc-nm { font-family: Fraunces, Georgia, serif; font-size: 21px; }
+.vc-st { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #caa450; min-height: 15px; }
+.vc-timer { font-size: 12px; color: #8fa1b3; }
+
+.vc-wave { height: 54px; display: flex; align-items: center; justify-content: center; gap: 4px; margin: 18px 0; }
+.vc-wave i { width: 4px; height: 8px; background: #caa450; border-radius: 3px; opacity: 0.4; }
+.vc-wave.talk i { animation: vcTalk 0.7s ease-in-out infinite; opacity: 0.9; }
+.vc-wave.listen i { animation: vcListen 1.6s ease-in-out infinite; opacity: 0.6; background: #7ee0a0; }
+@keyframes vcTalk { 0%, 100% { height: 8px; } 50% { height: 34px; } }
+@keyframes vcListen { 0%, 100% { height: 6px; } 50% { height: 16px; } }
+
+.vc-transcript {
+  min-height: 170px; max-height: 240px; overflow-y: auto;
+  border-top: 1px solid rgba(202, 164, 80, 0.2);
+  padding-top: 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.vc-hint { color: #8fa1b3; font-size: 13px; line-height: 1.6; }
+.vc-line { font-size: 13.5px; line-height: 1.45; animation: vcIn 0.3s ease; }
+@keyframes vcIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.vc-line .who { display: block; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 3px; color: #caa450; }
+.vc-line.user { color: #8fa1b3; }
+.vc-line.user .who { color: #8fa1b3; }
+.vc-line.interim { opacity: 0.6; font-style: italic; }
+
+.vc-btns { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
+.vc-btn {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: none; color: #fff; transition: 0.25s;
+}
+.vc-btn.call { background: #1d7a3e; }
+.vc-btn.call:hover { box-shadow: 0 0 30px rgba(29, 122, 62, 0.6); transform: translateY(-2px); }
+.vc-btn.call:disabled { background: #24405c; cursor: not-allowed; }
+.vc-btn.end { background: #8a2735; }
+.vc-btn.end:hover { box-shadow: 0 0 30px rgba(138, 39, 53, 0.6); }
+.vc-warn { color: #ff9d8a; font-size: 12px; text-align: center; margin-top: 12px; }
+
+.vc-right h1 {
+  font-family: Fraunces, Georgia, serif; font-weight: 500;
+  font-size: clamp(28px, 4vw, 44px); line-height: 1.08; letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+.gold { color: #caa450; }
+.vc-feats { margin-top: 18px; }
+.vc-feats .vf { padding: 16px 0; border-top: 1px solid rgba(202, 164, 80, 0.2); }
+.vc-feats .vf b { font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 18px; }
+.vc-feats .vf p { color: #8fa1b3; font-size: 14px; margin: 4px 0 0; }
+
+.vc-summary {
+  margin-top: 20px;
+  border: 1px solid rgba(202, 164, 80, 0.35);
+  border-radius: 12px;
+  padding: 18px 20px;
+  background: rgba(10, 23, 34, 0.6);
+  animation: vcIn 0.4s ease;
+}
+.vc-summary .k { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: #8fa1b3; }
+.vc-summary .outcome {
+  font-family: Fraunces, Georgia, serif; font-size: 22px; color: #caa450; margin: 6px 0;
+}
+.vc-summary .outcome.not_interested { color: #ff9d8a; }
+.vc-summary .outcome.visit_booked { color: #7ee0a0; }
+.vc-summary p { font-size: 14px; color: #cdd8e2; margin: 4px 0; }
+.vc-summary .nba b { color: #caa450; }
+.vc-foot { margin-top: 34px; font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: #4d6274; text-align: center; }
