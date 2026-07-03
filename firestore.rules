@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public site never talks to Firestore directly — all public writes go
+    // through the Next.js API routes (firebase-admin bypasses these rules).
+    // These rules only govern the signed-in counsellor dashboard.
+
+    function isCounsellor() {
+      return request.auth != null;
+    }
+
+    match /leads/{leadId} {
+      allow read, update: if isCounsellor();
+      allow create, delete: if false;
+
+      match /messages/{msgId} {
+        allow read: if isCounsellor();
+        allow write: if false;
+      }
+      match /events/{eventId} {
+        allow read, create: if isCounsellor();
+        allow update, delete: if false;
+      }
+    }
+
+    match /followups/{id} {
+      allow read: if isCounsellor();
+      allow write: if false;
+    }
+
+    match /precedents/{id} {
+      allow read: if true;              // public engine reads via API, harmless publicly
+      allow write: if isCounsellor();   // admin CRUD
+    }
+
+    match /quizAttempts/{id} {
+      allow read: if isCounsellor();
+      allow write: if false;
+    }
+
+    match /settings/{key} {
+      allow read: if isCounsellor();
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
