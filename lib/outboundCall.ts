@@ -43,7 +43,8 @@ export function callScoreThreshold() {
   return Number.isFinite(n) ? n : 70;
 }
 
-const COOLDOWN_MS = () => (demoMode() ? 10 * 60_000 : 24 * 3600_000);
+/** Demo: NO cooldown — every trigger dials instantly. Production: one auto-call/day. */
+const COOLDOWN_MS = () => (demoMode() ? 0 : 24 * 3600_000);
 
 type LeadDoc = FirebaseFirestore.DocumentData;
 
@@ -123,7 +124,20 @@ export async function placeOrQueueCall(opts: {
 
   if (opts.trigger === "auto_hot" || opts.trigger === "requested") {
     const gate = autoCallAllowed(lead, opts.trigger);
-    if (!gate.ok) return { status: "skipped", detail: gate.reason };
+    if (!gate.ok) {
+      // log the skip so "no call" is never a mystery in the dashboard/queue
+      await db.collection("callQueue").add({
+        leadId: opts.leadId,
+        phone: lead.phone ?? null,
+        name: lead.name ?? null,
+        reason: opts.reason,
+        trigger: opts.trigger,
+        status: "skipped",
+        error: gate.reason,
+        createdAt: FieldValue.serverTimestamp(),
+      });
+      return { status: "skipped", detail: gate.reason };
+    }
   } else if (!lead.phone) {
     return { status: "skipped", detail: "no phone" };
   }
