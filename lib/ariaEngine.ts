@@ -5,6 +5,7 @@ import { ariaSystemPrompt, type AriaChannel } from "@/lib/prompts/aria";
 import { upsertLead, addMessage, type LeadEvent, type LeadPatch } from "@/lib/leads";
 import { scheduleDrip } from "@/lib/followups";
 import { HOT_THRESHOLD } from "@/lib/scoring";
+import { placeOrQueueCall } from "@/lib/outboundCall";
 
 /** Aria's structured envelope — same shape the site's demo CRM panel consumes. */
 export const Envelope = z.object({
@@ -114,6 +115,15 @@ export async function runAria(opts: {
           leadId: persistedLeadId,
           patch: { handoffAt: "now" } as LeadPatch,
         });
+        // HOT lead → immediate personalised outbound call (guarded: business
+        // hours, 24h cooldown, master switch; queued if telephony not connected)
+        if (out.lead.phone && opts.channel !== "voice") {
+          placeOrQueueCall({
+            leadId: persistedLeadId,
+            reason: `went HOT on ${opts.channel.replace("_", " ")} — ${out.nba}`,
+            trigger: "auto_hot",
+          }).catch((e) => console.error("[ariaEngine] auto-call failed:", e));
+        }
       }
       if (out.signals.wa_opt_in) await scheduleDrip(persistedLeadId, out.speaker);
 

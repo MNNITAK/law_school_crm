@@ -182,6 +182,7 @@ export default function LeadDetail() {
                     Call
                   </a>
                   <SendTemplate leadId={id} onDone={() => flash("Template sent ✓")} />
+                  <CallNow leadId={id} onDone={flash} />
                 </>
               )}
               <button
@@ -224,6 +225,40 @@ export default function LeadDetail() {
         </div>
       </div>
     </>
+  );
+}
+
+function CallNow({ leadId, onDone }: { leadId: string; onDone: (m: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <button
+      className="adm-btn sm"
+      style={{ background: "#8a2735", color: "#fff" }}
+      disabled={busy}
+      onClick={async () => {
+        setBusy(true);
+        try {
+          const token = await getAuth().currentUser?.getIdToken();
+          const res = await fetch("/api/voice/outbound-call", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ leadId }),
+          });
+          const data = await res.json();
+          if (data.status === "placed") onDone("📞 AI is calling the lead now");
+          else if (data.status === "queued")
+            onDone("Call queued — connect the telephony provider (Vapi) to dial");
+          else onDone(`Not called: ${data.detail}`);
+        } finally {
+          setBusy(false);
+        }
+      }}
+    >
+      {busy ? "Dialling…" : "📞 Call now (AI)"}
+    </button>
   );
 }
 
