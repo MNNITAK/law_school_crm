@@ -32,9 +32,14 @@ export async function upsertLead(opts: {
   source?: string;
   patch?: LeadPatch;
   events?: LeadEvent[];
-}): Promise<{ leadId: string | null; score: number; temperature: string }> {
+}): Promise<{
+  leadId: string | null;
+  score: number;
+  temperature: string;
+  created: boolean;
+}> {
   const db = getDb();
-  if (!db) return { leadId: null, score: 0, temperature: "cold" };
+  if (!db) return { leadId: null, score: 0, temperature: "cold", created: false };
 
   const leads = db.collection("leads");
   let ref = opts.leadId ? leads.doc(opts.leadId) : null;
@@ -56,7 +61,9 @@ export async function upsertLead(opts: {
       existing = dup.docs[0].data();
     }
   }
+  let created = false;
   if (!ref) {
+    created = true;
     ref = leads.doc();
     await ref.set({
       createdAt: FieldValue.serverTimestamp(),
@@ -145,7 +152,7 @@ export async function upsertLead(opts: {
     { merge: true }
   );
   await batch.commit();
-  return { leadId: ref.id, score, temperature };
+  return { leadId: ref.id, score, temperature, created };
 }
 
 export async function addMessage(opts: {

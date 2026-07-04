@@ -31,22 +31,40 @@ export function autoCallsEnabled() {
   return process.env.OUTBOUND_CALLS_ENABLED === "true";
 }
 
-const COOLDOWN_H = 24; // max one automated call per lead per day
+/** DEMO_MODE=true → no business-hours gate + 10-min cooldown (instead of 24h),
+ *  so a 30-min client demo can fire multiple instant calls. */
+export function demoMode() {
+  return process.env.DEMO_MODE === "true";
+}
+/** Score needed for the automatic call. Production default 70 (hot);
+ *  set CALL_SCORE_THRESHOLD=50 for the demo's "even mediocre leads get a call". */
+export function callScoreThreshold() {
+  const n = parseInt(process.env.CALL_SCORE_THRESHOLD || "", 10);
+  return Number.isFinite(n) ? n : 70;
+}
+
+const COOLDOWN_MS = () => (demoMode() ? 10 * 60_000 : 24 * 3600_000);
 
 type LeadDoc = FirebaseFirestore.DocumentData;
 
-/** Business-hours + dedupe guards for AUTOMATED calls (manual clicks bypass hours). */
-export function autoCallAllowed(lead: LeadDoc): { ok: boolean; reason: string } {
+/** Guards for AUTOMATED calls (manual clicks and lead-requested calls bypass hours). */
+export function autoCallAllowed(
+  lead: LeadDoc,
+  trigger: "auto_hot" | "requested" = "auto_hot"
+): { ok: boolean; reason: string } {
   if (!autoCallsEnabled()) return { ok: false, reason: "auto calls disabled" };
   if (!lead.phone) return { ok: false, reason: "no phone" };
   if (["dead", "enrolled"].includes(lead.stage))
     return { ok: false, reason: "stage closed" };
   const last = lead.lastAutoCallAt?.toDate?.()?.getTime?.() ?? 0;
-  if (Date.now() - last < COOLDOWN_H * 3600_000)
+  if (Date.now() - last < COOLDOWN_MS())
     return { ok: false, reason: "cooldown (called recently)" };
-  // 9:00–20:00 IST calling window
-  const istHour = (new Date().getUTCHours() + 5.5) % 24;
-  if (istHour < 9 || istHour >= 20) return { ok: false, reason: "outside 9am–8pm IST" };
+  // 9:00–20:00 IST window — skipped in demo mode and when the lead ASKED for the call
+  if (!demoMode() && trigger !== "requested") {
+    const istHour = (new Date().getUTCHours() + 5.5) % 24;
+    if (istHour < 9 || istHour >= 20)
+      return { ok: false, reason: "outside 9am–8pm IST" };
+  }
   return { ok: true, reason: "ok" };
 }
 
@@ -94,7 +112,7 @@ function firstMessage(lead: LeadDoc) {
 export async function placeOrQueueCall(opts: {
   leadId: string;
   reason: string; // e.g. "went HOT on WhatsApp — asked about fees and visit"
-  trigger: "auto_hot" | "counsellor";
+  trigger: "auto_hot" | "requested" | "counsellor";
 }): Promise<{ status: "placed" | "queued" | "skipped"; detail: string }> {
   const db = getDb();
   if (!db) return { status: "skipped", detail: "db unconfigured" };
@@ -103,8 +121,8 @@ export async function placeOrQueueCall(opts: {
   if (!snap.exists) return { status: "skipped", detail: "lead not found" };
   const lead = snap.data()!;
 
-  if (opts.trigger === "auto_hot") {
-    const gate = autoCallAllowed(lead);
+  if (opts.trigger === "auto_hot" || opts.trigger === "requested") {
+    const gate = autoCallAllowed(lead, opts.trigger);
     if (!gate.ok) return { status: "skipped", detail: gate.reason };
   } else if (!lead.phone) {
     return { status: "skipped", detail: "no phone" };

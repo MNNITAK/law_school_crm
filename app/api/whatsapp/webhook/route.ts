@@ -5,6 +5,7 @@ import { pauseAutomation } from "@/lib/followups";
 import { sendWhatsAppText } from "@/lib/whatsapp";
 import { runAria } from "@/lib/ariaEngine";
 import { aiConfigured, type ChatMsg } from "@/lib/ai";
+import { renderTemplate } from "@/lib/templates";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -79,7 +80,7 @@ async function handleInbound(
   const phone = from.startsWith("91") && from.length === 12 ? from.slice(2) : from;
 
   // 1. lead + inbound message + engagement score
-  const { leadId } = await upsertLead({
+  const { leadId, created } = await upsertLead({
     source: "whatsapp",
     patch: { phone, name: profileName || undefined, waOptIn: true },
     events: [{ type: "wa_replied" }],
@@ -93,6 +94,23 @@ async function handleInbound(
     content: text,
     meta: { waMessageId },
   });
+
+  // first contact → instant welcome card with the college essentials,
+  // then Aria's personal reply follows
+  if (created) {
+    const welcome = renderTemplate("welcome_details", "student", profileName);
+    if (welcome) {
+      await sendWhatsAppText(from, welcome);
+      await addMessage({
+        leadId,
+        conversationId: "whatsapp",
+        channel: "whatsapp",
+        role: "assistant",
+        content: welcome,
+        meta: { template: "welcome_details", automated: true },
+      });
+    }
+  }
   // they're actively talking — pending drip steps would be noise
   await pauseAutomation(leadId, "lead is in live conversation");
 

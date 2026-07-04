@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { clientDb, firebaseConfigured } from "@/lib/firebase/client";
+import { WA_TEMPLATES } from "@/lib/templates";
 
 type AnyDoc = Record<string, unknown> & { id: string };
 
@@ -181,7 +182,6 @@ export default function LeadDetail() {
                   <a className="adm-btn ghost sm" href={`tel:${phone}`}>
                     Call
                   </a>
-                  <SendTemplate leadId={id} onDone={() => flash("Template sent ✓")} />
                   <CallNow leadId={id} onDone={flash} />
                 </>
               )}
@@ -204,6 +204,14 @@ export default function LeadDetail() {
               </button>
             </div>
           </div>
+
+          {phone && (
+            <TemplatePanel
+              leadId={id}
+              persona={String(lead.persona ?? "student")}
+              onDone={flash}
+            />
+          )}
 
           <div className="panel">
             <div className="ttl">Score history (audit trail)</div>
@@ -262,32 +270,81 @@ function CallNow({ leadId, onDone }: { leadId: string; onDone: (m: string) => vo
   );
 }
 
-function SendTemplate({ leadId, onDone }: { leadId: string; onDone: () => void }) {
+/** Demo weapon: fire any nurture template at this lead, instantly, with the
+ *  psychology explained — "this is what the system sends in this scenario". */
+function TemplatePanel({
+  leadId,
+  persona,
+  onDone,
+}: {
+  leadId: string;
+  persona: string;
+  onDone: (m: string) => void;
+}) {
+  const [sel, setSel] = useState(WA_TEMPLATES[0].id);
   const [busy, setBusy] = useState(false);
+  const t = WA_TEMPLATES.find((x) => x.id === sel)!;
+  const preview = (persona === "parent" ? t.parent : t.student).replace(
+    /\{name\}/g,
+    "…"
+  );
   return (
-    <button
-      className="adm-btn ghost sm"
-      disabled={busy}
-      onClick={async () => {
-        setBusy(true);
-        try {
-          const token = await getAuth().currentUser?.getIdToken();
-          const res = await fetch("/api/whatsapp/send", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ leadId, step: "day1_eligibility" }),
-          });
-          if (res.ok) onDone();
-          else alert("Send failed — is the number a registered test recipient?");
-        } finally {
-          setBusy(false);
-        }
-      }}
-    >
-      {busy ? "Sending…" : "Send Day-1 (WA)"}
-    </button>
+    <div className="panel">
+      <div className="ttl">WhatsApp nurture templates — manual trigger</div>
+      <select value={sel} onChange={(e) => setSel(e.target.value)} style={{ marginBottom: 8 }}>
+        {WA_TEMPLATES.map((x) => (
+          <option key={x.id} value={x.id}>
+            {x.label}
+          </option>
+        ))}
+      </select>
+      <p style={{ fontSize: ".7rem", color: "#8fa1b3", margin: "0 0 4px" }}>
+        <b style={{ color: "#ecd9a8" }}>Auto-fires:</b> {t.scenario}
+      </p>
+      <p style={{ fontSize: ".7rem", color: "#8fa1b3", margin: "0 0 8px" }}>
+        <b style={{ color: "#ecd9a8" }}>Psychology:</b> {t.psychology}
+      </p>
+      <p
+        style={{
+          fontSize: ".76rem",
+          background: "#0a1722",
+          border: "1px solid rgba(202,164,80,.2)",
+          borderRadius: 8,
+          padding: "8px 10px",
+          whiteSpace: "pre-wrap",
+          maxHeight: 140,
+          overflowY: "auto",
+        }}
+      >
+        {preview}
+      </p>
+      <button
+        className="adm-btn sm"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          try {
+            const token = await getAuth().currentUser?.getIdToken();
+            const res = await fetch("/api/whatsapp/send", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ leadId, step: sel }),
+            });
+            if (res.ok) onDone(`✓ "${t.label}" sent on WhatsApp`);
+            else {
+              const d = await res.json().catch(() => ({}));
+              onDone(`Send failed: ${d.error ?? res.status}`);
+            }
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        {busy ? "Sending…" : "Send this template now →"}
+      </button>
+    </div>
   );
 }

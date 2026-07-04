@@ -2,6 +2,7 @@ import "server-only";
 import { FieldValue } from "firebase-admin/firestore";
 import { getDb } from "@/lib/firebase/admin";
 import { COLLEGE } from "@/lib/college";
+import { renderTemplate } from "@/lib/templates";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -72,6 +73,10 @@ export function renderDrip(
   persona: "student" | "parent",
   name?: string | null
 ): string {
+  // template library is the single source of truth; legacy step ids map across
+  const id = step === "day3_success_story" ? "social_proof_story" : step;
+  const fromLib = renderTemplate(id, persona, name);
+  if (fromLib) return fromLib;
   const all = [...DRIP_STEPS.map((s) => ({ step: s.step, student: s.student, parent: s.parent })), REVIVAL_MESSAGE];
   const s = all.find((x) => x.step === step);
   if (!s) return "";

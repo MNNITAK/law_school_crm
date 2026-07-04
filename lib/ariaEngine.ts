@@ -5,7 +5,7 @@ import { ariaSystemPrompt, type AriaChannel } from "@/lib/prompts/aria";
 import { upsertLead, addMessage, type LeadEvent, type LeadPatch } from "@/lib/leads";
 import { scheduleDrip } from "@/lib/followups";
 import { HOT_THRESHOLD } from "@/lib/scoring";
-import { placeOrQueueCall } from "@/lib/outboundCall";
+import { placeOrQueueCall, callScoreThreshold } from "@/lib/outboundCall";
 
 /** Aria's structured envelope — same shape the site's demo CRM panel consumes. */
 export const Envelope = z.object({
@@ -39,6 +39,7 @@ export const Envelope = z.object({
     asked_fees: z.boolean(),
     visit_intent: z.boolean(),
     wa_opt_in: z.boolean(),
+    call_requested: z.boolean(),
   }),
   nba: z.string(),
   chips: z.array(z.string()).max(3),
@@ -115,14 +116,24 @@ export async function runAria(opts: {
           leadId: persistedLeadId,
           patch: { handoffAt: "now" } as LeadPatch,
         });
-        // HOT lead → immediate personalised outbound call (guarded: business
-        // hours, 24h cooldown, master switch; queued if telephony not connected).
-        // Phone presence is checked against the lead doc inside placeOrQueueCall —
-        // on WhatsApp the number comes from message metadata, not the chat text.
-        if (opts.channel !== "voice") {
+      }
+      // Instant outbound call, two ways in (guards: cooldown, master switch,
+      // business hours unless demo mode / lead-requested):
+      //  1. the lead explicitly said yes to a call ("call_requested")
+      //  2. the score crossed CALL_SCORE_THRESHOLD (demo: 50, production: 70)
+      // Phone presence is checked against the lead doc inside placeOrQueueCall —
+      // on WhatsApp the number comes from message metadata, not the chat text.
+      if (opts.channel !== "voice") {
+        if (out.signals.call_requested) {
           placeOrQueueCall({
             leadId: persistedLeadId,
-            reason: `went HOT on ${opts.channel.replace("_", " ")} — ${out.nba}`,
+            reason: `lead asked for a call right now on ${opts.channel.replace("_", " ")} — ${out.nba}`,
+            trigger: "requested",
+          }).catch((e) => console.error("[ariaEngine] requested-call failed:", e));
+        } else if (result.score >= callScoreThreshold()) {
+          placeOrQueueCall({
+            leadId: persistedLeadId,
+            reason: `crossed call threshold (${result.score}) on ${opts.channel.replace("_", " ")} — ${out.nba}`,
             trigger: "auto_hot",
           }).catch((e) => console.error("[ariaEngine] auto-call failed:", e));
         }
