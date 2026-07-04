@@ -116,8 +116,10 @@ export async function runAria(opts: {
           patch: { handoffAt: "now" } as LeadPatch,
         });
         // HOT lead → immediate personalised outbound call (guarded: business
-        // hours, 24h cooldown, master switch; queued if telephony not connected)
-        if (out.lead.phone && opts.channel !== "voice") {
+        // hours, 24h cooldown, master switch; queued if telephony not connected).
+        // Phone presence is checked against the lead doc inside placeOrQueueCall —
+        // on WhatsApp the number comes from message metadata, not the chat text.
+        if (opts.channel !== "voice") {
           placeOrQueueCall({
             leadId: persistedLeadId,
             reason: `went HOT on ${opts.channel.replace("_", " ")} — ${out.nba}`,
