@@ -11,6 +11,7 @@ import {
   updateDoc,
   addDoc,
   serverTimestamp,
+  deleteField,
   Timestamp,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -184,6 +185,21 @@ export default function LeadDetail() {
                   </a>
                   <CallNow leadId={id} onDone={flash} />
                 </>
+              )}
+              {Boolean(lead.handoffAt) && (
+                <button
+                  className="adm-btn ghost sm"
+                  title="Handoff mutes the WhatsApp bot for this lead — this hands the conversation back to Aria"
+                  onClick={async () => {
+                    await updateDoc(doc(clientDb(), "leads", id), {
+                      handoffAt: deleteField(),
+                      updatedAt: serverTimestamp(),
+                    });
+                    flash("Bot resumed for this lead");
+                  }}
+                >
+                  🤖 Resume bot
+                </button>
               )}
               <button
                 className="adm-btn ghost sm"

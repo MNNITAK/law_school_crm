@@ -114,9 +114,12 @@ async function handleInbound(
   // they're actively talking — pending drip steps would be noise
   await pauseAutomation(leadId, "lead is in live conversation");
 
-  // 2. human handoff check: once a counsellor owns the lead, the bot stays quiet
+  // 2. human handoff check: once a counsellor owns the lead, the bot stays
+  // quiet — except in DEMO_MODE, where the bot always answers (a demo phone
+  // goes hot in minutes and would otherwise mute itself mid-presentation)
   const lead = (await db.collection("leads").doc(leadId).get()).data()!;
-  if (lead.handoffAt || ["dead", "enrolled"].includes(lead.stage)) return;
+  if (["dead", "enrolled"].includes(lead.stage)) return;
+  if (lead.handoffAt && process.env.DEMO_MODE !== "true") return;
   if (!aiConfigured()) return;
 
   // 3. rebuild recent WhatsApp history for context (oldest → newest)
