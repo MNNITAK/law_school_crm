@@ -190,16 +190,30 @@ export async function placeOrQueueCall(opts: {
           { role: "system", content: callPrompt(lead, opts.reason, recentContext) },
         ],
       },
-      // ElevenLabs multilingual = warmest / most human Hinglish on Vapi's shelf.
-      // Swap voices via env (VAPI_VOICE_PROVIDER / VAPI_VOICE_ID / VAPI_VOICE_MODEL).
-      voice: {
-        provider: process.env.VAPI_VOICE_PROVIDER || "11labs",
-        voiceId: process.env.VAPI_VOICE_ID || "sarah",
-        ...(!process.env.VAPI_VOICE_PROVIDER ||
-        process.env.VAPI_VOICE_PROVIDER === "11labs"
-          ? { model: process.env.VAPI_VOICE_MODEL || "eleven_turbo_v2_5" }
-          : {}),
-      },
+      // VAPI_VOICE_PROVIDER=rumik → our custom-TTS bridge: the SAME rumik voice
+      // as the website's Voice Counsel, with ElevenLabs as automatic fallback.
+      // Otherwise: ElevenLabs multilingual (or whatever env overrides say).
+      voice:
+        process.env.VAPI_VOICE_PROVIDER === "rumik"
+          ? {
+              provider: "custom-voice",
+              server: {
+                url: `${base}/api/tts/vapi`,
+                secret: secret || undefined,
+                timeoutSeconds: 20,
+              },
+              fallbackPlan: {
+                voices: [{ provider: "11labs", voiceId: "sarah" }],
+              },
+            }
+          : {
+              provider: process.env.VAPI_VOICE_PROVIDER || "11labs",
+              voiceId: process.env.VAPI_VOICE_ID || "sarah",
+              ...(!process.env.VAPI_VOICE_PROVIDER ||
+              process.env.VAPI_VOICE_PROVIDER === "11labs"
+                ? { model: process.env.VAPI_VOICE_MODEL || "eleven_turbo_v2_5" }
+                : {}),
+            },
       transcriber: {
         provider: "deepgram",
         model: "nova-2",
