@@ -8,7 +8,9 @@ export const COLLEGE = {
     "Sector 9, Jankipuram Vistar (AKTU–CDRI Road), Lucknow, Uttar Pradesh 226021",
   phone: "+91 81770 01081",
   principalPhone: "+91 93696 38650",
-  whatsappNumber: "918177001081",
+  // TRIAL: Meta test number the Aria bot lives on. At launch, replace with the
+  // college's real WABA number (918177001081) once it's onboarded to the API.
+  whatsappNumber: "15550957066",
   email: "info@cgclko.com",
   principal: "Dr. Shiv Bahadur Tiwari",
   manager: "Dr. Mamta Srivastava",
