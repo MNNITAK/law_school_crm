@@ -101,9 +101,10 @@ HARD RULES: never invent fees, dates, scholarship amounts or placement figures �
 
 function firstMessage(lead: LeadDoc) {
   const name = lead.name ? `, ${String(lead.name).split(" ")[0]}` : "";
+  // "mein" (not "main") so the TTS pronounces मैं correctly instead of English "main"
   return lead.persona === "parent"
-    ? `Namaste, main City Law College, Lucknow se Aria bol rahi hoon. Aapne humse enquiry ki thi, isliye personally baat karne ke liye call kiya. Kahiye, main aapki kya madad kar sakti hoon?`
-    : `Hi${name}! Main Aria, City Law College Lucknow se. Aapne abhi humse baat ki thi na — bas usi baare mein personally baat karne ke liye call kiya. Kaise hain aap? 😊`.replace(" 😊", "");
+    ? `Namaste, mein City Law College, Lucknow se Aria bol rahi hoon. Aapne humse enquiry ki thi, isliye personally baat karne ke liye call kiya. Kahiye, mein aapki kya madad kar sakti hoon?`
+    : `Hi${name}! Mein Aria, City Law College Lucknow se. Aapne abhi humse baat ki thi na — bas usi baare mein personally baat karne ke liye call kiya. Kaise hain aap?`;
 }
 
 /**
