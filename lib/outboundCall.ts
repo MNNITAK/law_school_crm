@@ -190,10 +190,15 @@ export async function placeOrQueueCall(opts: {
           { role: "system", content: callPrompt(lead, opts.reason, recentContext) },
         ],
       },
-      // multilingual voice; swap via env once a preferred Hindi voice is chosen in Vapi
+      // ElevenLabs multilingual = warmest / most human Hinglish on Vapi's shelf.
+      // Swap voices via env (VAPI_VOICE_PROVIDER / VAPI_VOICE_ID / VAPI_VOICE_MODEL).
       voice: {
         provider: process.env.VAPI_VOICE_PROVIDER || "11labs",
         voiceId: process.env.VAPI_VOICE_ID || "sarah",
+        ...(!process.env.VAPI_VOICE_PROVIDER ||
+        process.env.VAPI_VOICE_PROVIDER === "11labs"
+          ? { model: process.env.VAPI_VOICE_MODEL || "eleven_turbo_v2_5" }
+          : {}),
       },
       transcriber: {
         provider: "deepgram",
