@@ -105,7 +105,9 @@ export async function POST(req: NextRequest) {
       nextBestAction: s.next_best_action,
       stage: s.outcome === "visit_booked" ? "visit_scheduled" : undefined,
     };
-    if (s.outcome === "not_interested") patch.stage = "dead";
+    // never auto-kill a lead off one call — a counsellor reviews "not interested"
+    if (s.outcome === "not_interested")
+      patch.nextBestAction = `⚠ Call marked NOT INTERESTED — review before closing. ${s.next_best_action}`;
     await upsertLead({ leadId, patch, events });
     await db
       .collection("leads")
