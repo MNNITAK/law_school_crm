@@ -20,6 +20,12 @@
 .pr-kick { font-size: 0.66rem; letter-spacing: 0.3em; text-transform: uppercase; color: #caa450; }
 .pr-grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 46px; align-items: start; }
 @media (max-width: 880px) { .pr-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) {
+  .pr-page { padding: 16px 14px 32px; }
+  .pr-grid { gap: 30px; }
+  .pr-card { padding: 18px 16px; }
+  .pr-card .meta { gap: 16px; flex-wrap: wrap; }
+}
 .pr-left h1 {
   font-family: Fraunces, Georgia, serif;
   font-weight: 500;
