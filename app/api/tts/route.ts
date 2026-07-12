@@ -1,38 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
+import { makeLimiter } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
 /**
  * Server proxy to rumik.ai Silk TTS (the key never reaches the browser).
- * POST { text } → audio/wav. Client falls back to browser speechSynthesis on any failure.
+ * POST { text, sessionId? } → audio/wav. Client falls back to browser speechSynthesis on any failure.
  * Model: "muga" — rumik's expressive Hinglish voice.
  */
 const RUMIK_URL = process.env.RUMIK_TTS_URL || "https://silk-api.rumik.ai/v1/tts";
 
-const hits = new Map<string, { n: number; t: number }>();
-function rateLimited(ip: string) {
-  const now = Date.now();
-  const h = hits.get(ip);
-  if (!h || now - h.t > 60_000) {
-    hits.set(ip, { n: 1, t: now });
-    return false;
-  }
-  h.n++;
-  return h.n > 30;
-}
+/* 30/min per voice session + high per-IP ceiling (campus NAT — see lib/rateLimit) */
+const limited = makeLimiter({ perKey: 30, perIp: 120 });
 
 export async function POST(req: NextRequest) {
   const key = process.env.RUMIK_API_KEY;
   if (!key) return NextResponse.json({ error: "tts_unconfigured" }, { status: 503 });
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local";
-  if (rateLimited(ip))
-    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
 
-  const body = (await req.json().catch(() => null)) as { text?: string } | null;
+  const body = (await req.json().catch(() => null)) as {
+    text?: string;
+    sessionId?: string;
+  } | null;
   const text = body?.text?.slice(0, 600);
   if (!text) return NextResponse.json({ error: "text required" }, { status: 400 });
+
+  if (limited(body?.sessionId?.slice(0, 64), ip))
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
 
   try {
     const res = await fetch(RUMIK_URL, {

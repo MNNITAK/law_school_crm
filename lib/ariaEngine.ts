@@ -1,4 +1,5 @@
 import "server-only";
+import { after } from "next/server";
 import { z } from "zod";
 import { generateStructured, type ChatMsg } from "@/lib/ai";
 import { ariaSystemPrompt, type AriaChannel } from "@/lib/prompts/aria";
@@ -111,6 +112,9 @@ export async function runAria(opts: {
     persistedLeadId = result.leadId;
 
     if (persistedLeadId) {
+      // const capture: `persistedLeadId` is a mutable `let`, so the after()
+      // closures below can't rely on the narrowing above
+      const dialLeadId = persistedLeadId;
       if (out.handoff || result.score >= HOT_THRESHOLD) {
         await upsertLead({
           leadId: persistedLeadId,
@@ -123,19 +127,26 @@ export async function runAria(opts: {
       //  2. the score crossed CALL_SCORE_THRESHOLD (demo: 50, production: 70)
       // Phone presence is checked against the lead doc inside placeOrQueueCall —
       // on WhatsApp the number comes from message metadata, not the chat text.
+      // after() (Vercel waitUntil) keeps the invocation alive until the dial
+      // settles without delaying the chat reply — a bare .catch() here lets the
+      // serverless runtime freeze before the Vapi request is ever sent.
       if (opts.channel !== "voice") {
         if (out.signals.call_requested) {
-          placeOrQueueCall({
-            leadId: persistedLeadId,
-            reason: `lead asked for a call right now on ${opts.channel.replace("_", " ")} — ${out.nba}`,
-            trigger: "requested",
-          }).catch((e) => console.error("[ariaEngine] requested-call failed:", e));
+          after(() =>
+            placeOrQueueCall({
+              leadId: dialLeadId,
+              reason: `lead asked for a call right now on ${opts.channel.replace("_", " ")} — ${out.nba}`,
+              trigger: "requested",
+            }).catch((e) => console.error("[ariaEngine] requested-call failed:", e))
+          );
         } else if (result.score >= callScoreThreshold()) {
-          placeOrQueueCall({
-            leadId: persistedLeadId,
-            reason: `crossed call threshold (${result.score}) on ${opts.channel.replace("_", " ")} — ${out.nba}`,
-            trigger: "auto_hot",
-          }).catch((e) => console.error("[ariaEngine] auto-call failed:", e));
+          after(() =>
+            placeOrQueueCall({
+              leadId: dialLeadId,
+              reason: `crossed call threshold (${result.score}) on ${opts.channel.replace("_", " ")} — ${out.nba}`,
+              trigger: "auto_hot",
+            }).catch((e) => console.error("[ariaEngine] auto-call failed:", e))
+          );
         }
       }
       if (out.signals.wa_opt_in) await scheduleDrip(persistedLeadId, out.speaker);

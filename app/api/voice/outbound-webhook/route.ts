@@ -52,6 +52,20 @@ export async function POST(req: NextRequest) {
   if (!leadId || !db) return NextResponse.json({ ok: true });
 
   try {
+    // free the concurrency slot: mark this call's queue entry completed
+    if (m.call?.id) {
+      const q = await db
+        .collection("callQueue")
+        .where("vapiCallId", "==", m.call.id)
+        .limit(1)
+        .get();
+      if (!q.empty)
+        await q.docs[0].ref.set(
+          { status: "completed", endedAt: FieldValue.serverTimestamp() },
+          { merge: true }
+        );
+    }
+
     // transcript: prefer structured messages, fall back to the flat transcript string
     const turns = (m.artifact?.messages ?? [])
       .filter((x) => x.role === "user" || x.role === "bot" || x.role === "assistant")

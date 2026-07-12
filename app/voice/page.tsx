@@ -28,6 +28,10 @@ export default function VoicePage() {
   const recRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // stable per-visit key for the TTS rate limiter (per-session, not per-IP)
+  const ttsSessionRef = useRef<string>(
+    typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : String(Math.random())
+  );
 
   useEffect(() => {
     const w = window as any;
@@ -56,7 +60,7 @@ export default function VoicePage() {
       const res = await fetch("/api/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: clean }),
+        body: JSON.stringify({ text: clean, sessionId: ttsSessionRef.current }),
       });
       if (!res.ok) throw new Error("tts unavailable");
       const blob = await res.blob();

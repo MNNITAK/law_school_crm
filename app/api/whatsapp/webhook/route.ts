@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
+import { FieldValue } from "firebase-admin/firestore";
 import { getDb } from "@/lib/firebase/admin";
 import { upsertLead, addMessage } from "@/lib/leads";
 import { pauseAutomation } from "@/lib/followups";
@@ -47,25 +48,59 @@ export async function POST(req: NextRequest) {
   } | null;
 
   // Always 200 quickly — Meta retries otherwise.
-  if (!body?.entry || !getDb()) return NextResponse.json({ ok: true });
+  const db = getDb();
+  if (!body?.entry || !db) return NextResponse.json({ ok: true });
 
-  try {
-    for (const entry of body.entry) {
-      for (const change of entry.changes ?? []) {
-        const value = change.value;
-        for (const msg of value?.messages ?? []) {
-          if (msg.type !== "text" || !msg.text?.body) continue;
-          await handleInbound(
-            msg.from,
-            msg.text.body,
-            msg.id,
-            value?.contacts?.[0]?.profile?.name
-          );
-        }
+  // flatten all deliveries, then dedup Meta's redelivery retries via a
+  // create() on the message id BEFORE acking — a doc that already exists
+  // means this wamid was processed (or is being processed) by another attempt
+  const inbound: { from: string; text: string; id: string; profileName?: string }[] = [];
+  for (const entry of body.entry) {
+    for (const change of entry.changes ?? []) {
+      const value = change.value;
+      for (const msg of value?.messages ?? []) {
+        if (msg.type !== "text" || !msg.text?.body) continue;
+        inbound.push({
+          from: msg.from,
+          text: msg.text.body,
+          id: msg.id,
+          profileName: value?.contacts?.[0]?.profile?.name,
+        });
       }
     }
-  } catch (e) {
-    console.error("[wa webhook]", e);
+  }
+
+  const fresh: typeof inbound = [];
+  for (const m of inbound) {
+    try {
+      await db
+        .collection("waEvents")
+        .doc(m.id.replace(/[/+=]/g, "_"))
+        .create({ receivedAt: FieldValue.serverTimestamp(), from: m.from });
+      fresh.push(m);
+    } catch (e) {
+      const code = (e as { code?: number }).code;
+      if (code === 6 /* ALREADY_EXISTS */) {
+        console.log("[wa webhook] duplicate delivery skipped:", m.id);
+      } else {
+        console.error("[wa webhook] dedup write failed, processing anyway:", e);
+        fresh.push(m);
+      }
+    }
+  }
+
+  // heavy work (model call + reply) runs AFTER the 200 — Meta gets its ack in
+  // milliseconds instead of retrying because a slow Aria turn blew its timeout
+  if (fresh.length) {
+    after(async () => {
+      for (const m of fresh) {
+        try {
+          await handleInbound(m.from, m.text, m.id, m.profileName);
+        } catch (e) {
+          console.error("[wa webhook]", e);
+        }
+      }
+    });
   }
   return NextResponse.json({ ok: true });
 }

@@ -1,5 +1,5 @@
 import "server-only";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { getDb } from "@/lib/firebase/admin";
 import { COLLEGE } from "@/lib/college";
 import { normalizePhone } from "@/lib/whatsapp";
@@ -46,6 +46,33 @@ export function callScoreThreshold() {
 /** Demo: NO cooldown — every trigger dials instantly. Production: one auto-call/day. */
 const COOLDOWN_MS = () => (demoMode() ? 0 : 24 * 3600_000);
 
+/** Global daily budget for AUTONOMOUS calls (auto_hot/requested). Counsellor
+ *  clicks are deliberate + low-volume, so they don't count against it. */
+function dailyCallCap() {
+  const n = parseInt(process.env.MAX_AUTO_CALLS_PER_DAY || "", 10);
+  return Number.isFinite(n) ? n : 250;
+}
+/** In-flight dial cap for ALL triggers — Vapi pay-as-you-go hard limit is 10 slots. */
+function concurrentCallCap() {
+  const n = parseInt(process.env.MAX_CONCURRENT_CALLS || "", 10);
+  return Number.isFinite(n) ? n : 8;
+}
+
+/** IST calendar date (same UTC+5.5 math as the business-hours gate). */
+function istDateKey() {
+  return new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
+}
+
+/** Calls currently in flight = callQueue "placed" in the last 8 minutes and not
+ *  yet marked "completed" by the end-of-call webhook. The 8-min window
+ *  (maxDurationSeconds 360 + buffer) means a lost webhook self-heals instead of
+ *  wedging the dialer, which is why counting beats an increment/decrement counter. */
+async function inFlightCallCount(db: FirebaseFirestore.Firestore) {
+  const since = Timestamp.fromMillis(Date.now() - 8 * 60_000);
+  const snap = await db.collection("callQueue").where("createdAt", ">", since).get();
+  return snap.docs.filter((d) => d.data().status === "placed").length;
+}
+
 type LeadDoc = FirebaseFirestore.DocumentData;
 
 /** Guards for AUTOMATED calls (manual clicks and lead-requested calls bypass hours). */
@@ -57,6 +84,8 @@ export function autoCallAllowed(
   if (!lead.phone) return { ok: false, reason: "no phone" };
   if (["dead", "enrolled"].includes(lead.stage))
     return { ok: false, reason: "stage closed" };
+  // fast-path cooldown check; the authoritative (race-free) one runs inside
+  // the claim transaction in placeOrQueueCall
   const last = lead.lastAutoCallAt?.toDate?.()?.getTime?.() ?? 0;
   if (Date.now() - last < COOLDOWN_MS())
     return { ok: false, reason: "cooldown (called recently)" };
@@ -174,6 +203,56 @@ export async function placeOrQueueCall(opts: {
     return { status: "queued", detail: "Vapi not configured — intent recorded in callQueue" };
   }
 
+  // Concurrency gate — ALL triggers (a counsellor call occupies a real Vapi slot).
+  if ((await inFlightCallCount(db)) >= concurrentCallCap()) {
+    await db.collection("callQueue").add({ ...queueDoc, status: "skipped", error: "concurrency cap" });
+    return { status: "skipped", detail: "concurrency cap — try again in a few minutes" };
+  }
+
+  // Claim-then-dial: atomically re-check cooldown + daily budget and stamp
+  // lastAutoCallAt BEFORE the Vapi request, so two concurrent turns for the
+  // same lead can never both dial. Released below if the dial fails.
+  const isAuto = opts.trigger !== "counsellor";
+  const counterRef = db.collection("counters").doc(`calls_${istDateKey()}`);
+  const claim = await db.runTransaction(async (tx) => {
+    const fresh = await tx.get(ref);
+    if (!fresh.exists) return { ok: false as const, reason: "lead not found" };
+    const l = fresh.data()!;
+    const prev: Timestamp | null = l.lastAutoCallAt ?? null;
+    if (isAuto) {
+      const last = prev?.toDate?.()?.getTime?.() ?? 0;
+      if (Date.now() - last < COOLDOWN_MS())
+        return { ok: false as const, reason: "cooldown (called recently)" };
+      const counter = await tx.get(counterRef);
+      const count = counter.exists ? (counter.data()!.count ?? 0) : 0;
+      if (count >= dailyCallCap())
+        return { ok: false as const, reason: "daily call cap reached" };
+      tx.set(
+        counterRef,
+        { date: istDateKey(), count: FieldValue.increment(1), updatedAt: FieldValue.serverTimestamp() },
+        { merge: true }
+      );
+    }
+    tx.update(ref, { lastAutoCallAt: Timestamp.now() });
+    return { ok: true as const, prev };
+  });
+  if (!claim.ok) {
+    await db.collection("callQueue").add({ ...queueDoc, status: "skipped", error: claim.reason });
+    return { status: "skipped", detail: claim.reason };
+  }
+  const releaseClaim = async () => {
+    try {
+      await ref.update({ lastAutoCallAt: claim.prev ?? FieldValue.delete() });
+      if (isAuto)
+        await counterRef.set(
+          { count: FieldValue.increment(-1), updatedAt: FieldValue.serverTimestamp() },
+          { merge: true }
+        );
+    } catch (e) {
+      console.error("[outboundCall] claim release failed:", e);
+    }
+  };
+
   const base = process.env.APP_BASE_URL || "https://law-school-crm.vercel.app";
   const secret = process.env.OUTBOUND_WEBHOOK_SECRET || "";
   const body = {
@@ -226,26 +305,33 @@ export async function placeOrQueueCall(opts: {
     },
   };
 
-  const res = await fetch("https://api.vapi.ai/call", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.VAPI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch("https://api.vapi.ai/call", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.VAPI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    console.error("[outboundCall] vapi fetch threw:", e);
+    await releaseClaim();
+    await db.collection("callQueue").add({ ...queueDoc, status: "failed", error: String(e).slice(0, 300) });
+    return { status: "skipped", detail: "vapi unreachable" };
+  }
   const data = (await res.json().catch(() => ({}))) as { id?: string; message?: string };
   if (!res.ok) {
     console.error("[outboundCall] vapi error", res.status, data);
+    await releaseClaim();
     await db.collection("callQueue").add({ ...queueDoc, status: "failed", error: data.message ?? res.status });
     return { status: "skipped", detail: `vapi error: ${data.message ?? res.status}` };
   }
 
+  // lastAutoCallAt was already stamped by the claim transaction
   await db.collection("callQueue").add({ ...queueDoc, status: "placed", vapiCallId: data.id ?? null });
-  await ref.set(
-    { lastAutoCallAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() },
-    { merge: true }
-  );
+  await ref.set({ updatedAt: FieldValue.serverTimestamp() }, { merge: true });
   await ref.collection("events").add({
     type: "outbound_call_placed",
     points: 0,

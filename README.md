@@ -68,6 +68,42 @@ npm run dev
    `visit booked` + AI call summary.
 6. Show `/admin/sequences` (drip timeline) and `/admin/reports`; export the CSV.
 
+## Handover checklist (internal — client doc is `HANDOVER.md`)
+
+The client receives only: the `/admin` URL, login credentials (sent separately),
+and the widget snippet `<script src="https://<domain>/widget.js" async></script>`.
+No API routes, keys, or Firebase/Vercel details.
+
+The embeddable widget: `public/widget.js` (loader the client pastes) opens an
+iframe of `/widget` (`app/widget/page.tsx` → `components/widget/AriaChatWidget.tsx`),
+which calls `/api/aria` same-origin — no CORS involved.
+
+Before/at handover:
+
+- [ ] `WIDGET_ALLOWED_ORIGINS` — once the client gives their website domain, set it
+      in Vercel (e.g. `https://theirsite.in,https://www.theirsite.in`) and **redeploy**
+      (the CSP frame-ancestors header is baked at build time). Unset = any site may embed.
+- [ ] `APP_BASE_URL` — must be the real production domain (drives Vapi webhook +
+      TTS bridge callbacks; code fallback is the old `law-school-crm.vercel.app`).
+- [ ] Rotate anything shared during demos: rumik key, `WHATSAPP_TOKEN`,
+      `VAPI_API_KEY`, the demo admin password.
+- [ ] `DEMO_MODE=false`, `CALL_SCORE_THRESHOLD=70` for production behaviour.
+- [ ] Create the client's counsellor login(s) in Firebase console → send credentials
+      through a separate channel (never in HANDOVER.md).
+
+Production scale (~200 calls/day) — done in code, needs ops:
+
+- [ ] **Vercel Pro** — Hobby prohibits commercial use and caps functions at 60s
+      (the followups cron declares 300s).
+- [ ] **Groq Developer tier** — free tier is 100k tokens/day (~30–50 Aria turns).
+      Same `GROQ_API_KEY` env once upgraded.
+- [ ] Set **both** `GROQ_API_KEY` (primary) and `ANTHROPIC_API_KEY` (automatic
+      fallback on Groq 429/5xx/timeout) in production.
+- [ ] `MAX_AUTO_CALLS_PER_DAY` (default 250) + `MAX_CONCURRENT_CALLS` (default 8;
+      Vapi pay-as-you-go hard limit is 10 slots) — tune per client budget.
+- [ ] Optional: Firestore TTL policy on `waEvents.receivedAt` (~30 days) so the
+      WhatsApp dedup docs self-clean.
+
 ## Post-trial upgrades (quoted separately)
 
 - Real WABA (business verification) + approved templates → unlimited WhatsApp recipients.

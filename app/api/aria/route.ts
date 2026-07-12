@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { aiConfigured } from "@/lib/ai";
 import { runAria } from "@/lib/ariaEngine";
+import { makeLimiter } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -17,28 +18,20 @@ const Body = z.object({
   messages: z.array(InMsg).min(1).max(50),
 });
 
-/* naive per-IP rate limit (per serverless instance; fine for the trial) */
-const hits = new Map<string, { n: number; t: number }>();
-function rateLimited(ip: string) {
-  const now = Date.now();
-  const h = hits.get(ip);
-  if (!h || now - h.t > 60_000) {
-    hits.set(ip, { n: 1, t: now });
-    return false;
-  }
-  h.n++;
-  return h.n > 20;
-}
+/* 20/min per conversation + a high per-IP ceiling — a whole campus can sit
+   behind one NAT IP, so keying on IP alone falsely blocks real students */
+const limited = makeLimiter({ perKey: 20, perIp: 120 });
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local";
-  if (rateLimited(ip))
-    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
 
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success)
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   const { leadId, conversationId, channel, messages } = parsed.data;
+
+  if (limited(conversationId ?? leadId, ip))
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
 
   if (!aiConfigured())
     return NextResponse.json({ error: "ai_unconfigured" }, { status: 503 });
