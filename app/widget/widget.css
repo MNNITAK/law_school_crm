@@ -1,0 +1,97 @@
+/* Styles for the embeddable /widget iframe page.
+   Chat bubbles/cards/input reuse the global site.css classes
+   (.ai-log, .row, .bubble, .typing-b, .ai-card, .ai-input). */
+
+body:has(.widget-root) {
+  margin: 0;
+  padding: 0;
+  background: var(--ios-bg);
+  overflow: hidden;
+}
+
+.widget-root {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ios-bg);
+  font-family: var(--sans);
+}
+
+.widget-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(248, 248, 250, 0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  flex: none;
+}
+
+.widget-ava {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--ios-blue), var(--ios-blue-2));
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex: none;
+}
+
+.widget-id {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.widget-id b {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #111;
+  line-height: 1.2;
+}
+.widget-id span {
+  font-size: 0.72rem;
+  color: #34c759;
+  font-weight: 500;
+}
+
+.widget-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.06);
+  color: #555;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex: none;
+  transition: 0.2s;
+}
+.widget-close:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.widget-send {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(180deg, var(--ios-blue), var(--ios-blue-2));
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+.widget-send:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
