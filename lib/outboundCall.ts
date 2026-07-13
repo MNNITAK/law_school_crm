@@ -123,7 +123,7 @@ RECENT CONVERSATION CONTEXT: ${recentContext || "They enquired about admissions.
 
 CALL GOALS, in order: (1) reference what they asked about so the call feels personal, (2) answer remaining questions, (3) book a campus visit (${COLLEGE.address}) or guide them to apply, (4) confirm the best time for a human counsellor to assist if needed.
 
-STYLE: natural spoken Hindi-English mix matching how they speak; short sentences; never robotic; this is a phone call so no lists or formatting. Be warm and human. ROMANIZATION FOR THE VOICE: always write the Hindi pronoun मैं as "mein" (never "main"), and prefer spellings that read correctly aloud (e.g. "hoon", "nahin", "kripya").
+STYLE: natural spoken Hindi-English mix matching how they speak; never robotic; this is a phone call so no lists or formatting. Be warm and human. Keep every reply to 1-2 SHORT sentences, then a question or pause — never a paragraph; let them talk. ROMANIZATION FOR THE VOICE: always write the Hindi pronoun मैं as "mein" (never "main"), and prefer spellings that read correctly aloud (e.g. "hoon", "nahin", "kripya", "haan" not "han", "theek hai", "aap ke liye"). Spell out abbreviations the way they are spoken (e.g. "B A L L B" for BA LLB) and avoid digit-heavy strings — say numbers in words where natural.
 
 HARD RULES: never invent fees, dates, scholarship amounts or placement figures — for those, say the admissions office will confirm (${COLLEGE.phone}). Never claim the campus is open or closed on any particular day, and never invent timings — say the office will confirm the visit slot on ${COLLEGE.phone}. When they want to visit, ACCEPT the day they propose, note it down, and say the team will confirm. If they're busy, offer to call later and end politely. If they ask to stop calls, apologise and end immediately. Keep the call under 5 minutes. Never repeat the same sentence twice.`;
 }
@@ -265,7 +265,10 @@ export async function placeOrQueueCall(opts: {
       firstMessage: firstMessage(lead),
       model: {
         provider: "openai",
-        model: process.env.VAPI_MODEL || "gpt-4o",
+        model: process.env.VAPI_MODEL || "gpt-4o-mini",
+        temperature: 0.5,
+        // phone replies are 1-2 sentences; a cap keeps TTS from waiting on long generations
+        maxTokens: 150,
         messages: [
           { role: "system", content: callPrompt(lead, opts.reason, recentContext) },
         ],
@@ -289,6 +292,12 @@ export async function placeOrQueueCall(opts: {
           : {
               provider: process.env.VAPI_VOICE_PROVIDER || "11labs",
               voiceId: process.env.VAPI_VOICE_ID || "sarah",
+              // Vapi-native voices: opt into the upgraded V2 TTS model (better
+              // pronunciation, lower cost). Only "Rohan" lacks V2.
+              ...(process.env.VAPI_VOICE_PROVIDER === "vapi" &&
+              process.env.VAPI_VOICE_ID !== "Rohan"
+                ? { version: 2 }
+                : {}),
               ...(!process.env.VAPI_VOICE_PROVIDER ||
               process.env.VAPI_VOICE_PROVIDER === "11labs"
                 ? { model: process.env.VAPI_VOICE_MODEL || "eleven_turbo_v2_5" }
@@ -296,8 +305,20 @@ export async function placeOrQueueCall(opts: {
             },
       transcriber: {
         provider: "deepgram",
-        model: "nova-2",
-        language: process.env.VAPI_STT_LANG || "hi",
+        model: process.env.VAPI_STT_MODEL || "nova-3",
+        // "multi" = live Hindi↔English code-switching — pure "hi" mangled
+        // English terms like course names ("BA LLB"), fees, dates
+        language: process.env.VAPI_STT_LANG || "multi",
+      },
+      // Cut dead air after the caller stops talking. Smart endpointing is
+      // English-only, so use transcription-based timeouts for Hinglish.
+      startSpeakingPlan: {
+        waitSeconds: 0.4,
+        transcriptionEndpointingPlan: {
+          onPunctuationSeconds: 0.1,
+          onNoPunctuationSeconds: 1.0,
+          onNumberSeconds: 0.5,
+        },
       },
       server: { url: `${base}/api/voice/outbound-webhook?key=${secret}` },
       maxDurationSeconds: 360,

@@ -23,7 +23,7 @@ channel lands as a lead, scored and ready for your counsellors.
 
 ## 2. Your Admissions Dashboard
 
-**URL:** `https://<deployment-domain>/admin`
+**URL:** `https://law-school-crm.vercel.app/admin`
 
 **Login:** use the email and password we have shared with you separately
 (never share these with anyone outside your admissions team). To add or remove
@@ -50,7 +50,7 @@ just before the closing `</body>` tag — ideally in the shared footer/template
 so it appears on every page:
 
 ```html
-<script src="https://<deployment-domain>/widget.js" async></script>
+<script src="https://law-school-crm.vercel.app/widget.js" async></script>
 ```
 
 That's it. A blue chat bubble appears at the bottom-right of your site.**

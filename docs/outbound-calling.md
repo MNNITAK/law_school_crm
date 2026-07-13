@@ -28,6 +28,14 @@ marks, parent/student persona, and the last ~6 messages of their conversation
 a script. Guardrails carry over: no invented fees/dates, sub-5-minute calls,
 instant polite exit if asked.
 
+Latency/quality stack (all set in code — `lib/outboundCall.ts` — the Vapi
+dashboard only holds the phone number): LLM `gpt-4o-mini` capped at 150 tokens
+(fast first word, short spoken replies), Vapi native **V2** voice `Naina`
+(Indian female; the old `Neha` was retired), Deepgram `nova-3` with
+`language: multi` for live Hindi↔English code-switching, and a tuned
+`startSpeakingPlan` so Aria replies ~1s after the caller stops talking.
+Env overrides: `VAPI_MODEL`, `VAPI_VOICE_PROVIDER/ID`, `VAPI_STT_MODEL/LANG`.
+
 After the call, Vapi posts an end-of-call report to
 `/api/voice/outbound-webhook` → the transcript is attached to the lead, an AI
 summary files the outcome (`visit_booked` → stage `visit_scheduled`,
