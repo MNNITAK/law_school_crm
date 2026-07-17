@@ -23,6 +23,7 @@ const COLS = [
   "waOptIn",
   "nextBestAction",
   "createdAt",
+  "firstContactAt",
   "lastContactAt",
 ];
 

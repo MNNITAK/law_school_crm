@@ -221,6 +221,8 @@ export default function LeadDetail() {
             </div>
           </div>
 
+          <Copilot lead={lead} messages={messages} onDone={flash} />
+
           {phone && (
             <TemplatePanel
               leadId={id}
@@ -283,6 +285,181 @@ function CallNow({ leadId, onDone }: { leadId: string; onDone: (m: string) => vo
     >
       {busy ? "Dialling…" : "📞 Call now (AI)"}
     </button>
+  );
+}
+
+type CopilotResult = {
+  headline?: string;
+  journey?: string;
+  signals?: string[];
+  risks?: string[];
+  action?: string;
+  why?: string;
+  urgency?: string;
+  reply?: string;
+  tone_note?: string;
+};
+
+/** AI copilot: one-click lead summary, next-best-action, or a drafted reply.
+ *  Reuses the lead's already-loaded messages — no re-fetch. */
+function Copilot({
+  lead,
+  messages,
+  onDone,
+}: {
+  lead: AnyDoc;
+  messages: AnyDoc[];
+  onDone: (m: string) => void;
+}) {
+  const [busy, setBusy] = useState<string>("");
+  const [res, setRes] = useState<CopilotResult | null>(null);
+  const [kind, setKind] = useState<string>("");
+
+  const phone = ((lead.phone as string) || "").replace(/^\+/, "");
+
+  const run = async (action: "summary" | "draft" | "nba") => {
+    if (!messages.length) {
+      onDone("No conversation yet to analyse");
+      return;
+    }
+    setBusy(action);
+    setRes(null);
+    try {
+      const token = await getAuth().currentUser?.getIdToken();
+      const r = await fetch("/api/leads/copilot", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          action,
+          lead: {
+            name: lead.name ?? null,
+            course: lead.course ?? null,
+            city: lead.city ?? null,
+            qualifyingPercent: lead.qualifyingPercent ?? null,
+            persona: lead.persona ?? null,
+            stage: lead.stage ?? null,
+          },
+          messages: messages.slice(-60).map((m) => ({
+            role: String(m.role),
+            content: String(m.content).slice(0, 4000),
+          })),
+        }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (r.ok && data.result) {
+        setRes(data.result as CopilotResult);
+        setKind(action);
+      } else onDone(`Copilot failed: ${data.error ?? r.status}`);
+    } finally {
+      setBusy("");
+    }
+  };
+
+  return (
+    <div className="panel">
+      <div className="ttl">✦ AI copilot</div>
+      <div className="row-actions" style={{ marginBottom: res ? 12 : 0 }}>
+        <button className="adm-btn sm" disabled={!!busy} onClick={() => run("summary")}>
+          {busy === "summary" ? "Reading…" : "Summarise lead"}
+        </button>
+        <button className="adm-btn ghost sm" disabled={!!busy} onClick={() => run("nba")}>
+          {busy === "nba" ? "Thinking…" : "Next best action"}
+        </button>
+        <button className="adm-btn ghost sm" disabled={!!busy} onClick={() => run("draft")}>
+          {busy === "draft" ? "Writing…" : "Draft reply"}
+        </button>
+      </div>
+
+      {res && kind === "summary" && (
+        <div style={{ fontSize: ".82rem" }}>
+          <p style={{ color: "#ecd9a8", fontWeight: 600, margin: "0 0 6px" }}>
+            {res.headline}
+          </p>
+          <p style={{ margin: "0 0 8px" }}>{res.journey}</p>
+          {!!res.signals?.length && (
+            <p style={{ margin: "0 0 6px" }}>
+              <b style={{ color: "#7ee0a0" }}>Signals:</b> {res.signals.join(" · ")}
+            </p>
+          )}
+          {!!res.risks?.length && (
+            <p style={{ margin: 0 }}>
+              <b style={{ color: "#e0a07e" }}>Risks:</b> {res.risks.join(" · ")}
+            </p>
+          )}
+        </div>
+      )}
+
+      {res && kind === "nba" && (
+        <div style={{ fontSize: ".82rem" }}>
+          <p style={{ color: "#ecd9a8", fontWeight: 600, margin: "0 0 4px" }}>
+            {res.action}{" "}
+            <span
+              style={{
+                fontSize: ".68rem",
+                border: "1px solid",
+                borderRadius: 10,
+                padding: "1px 7px",
+                color:
+                  res.urgency === "high"
+                    ? "#ff9d9d"
+                    : res.urgency === "medium"
+                      ? "#ecd9a8"
+                      : "#8fa1b3",
+              }}
+            >
+              {res.urgency}
+            </span>
+          </p>
+          <p style={{ margin: 0, color: "#8fa1b3" }}>{res.why}</p>
+        </div>
+      )}
+
+      {res && kind === "draft" && (
+        <div style={{ fontSize: ".82rem" }}>
+          <p
+            style={{
+              background: "#0a1722",
+              border: "1px solid rgba(202,164,80,.2)",
+              borderRadius: 8,
+              padding: "8px 10px",
+              whiteSpace: "pre-wrap",
+              margin: "0 0 8px",
+            }}
+          >
+            {res.reply}
+          </p>
+          <div className="row-actions">
+            <button
+              className="adm-btn sm"
+              onClick={() => {
+                navigator.clipboard?.writeText(res.reply ?? "");
+                onDone("Draft copied");
+              }}
+            >
+              Copy
+            </button>
+            {phone && (
+              <a
+                className="adm-btn ghost sm"
+                href={`https://wa.me/${phone}?text=${encodeURIComponent(res.reply ?? "")}`}
+                target="_blank"
+                rel="noopener"
+              >
+                Open in WhatsApp
+              </a>
+            )}
+          </div>
+          {res.tone_note && (
+            <p style={{ color: "#8fa1b3", fontSize: ".7rem", margin: "8px 0 0" }}>
+              {res.tone_note}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

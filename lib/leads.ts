@@ -165,18 +165,34 @@ export async function addMessage(opts: {
 }) {
   const db = getDb();
   if (!db) return;
-  await db
-    .collection("leads")
-    .doc(opts.leadId)
-    .collection("messages")
-    .add({
-      conversationId: opts.conversationId,
-      channel: opts.channel,
-      role: opts.role,
-      content: opts.content,
-      meta: opts.meta ?? null,
-      createdAt: FieldValue.serverTimestamp(),
-    });
+  const leadRef = db.collection("leads").doc(opts.leadId);
+  await leadRef.collection("messages").add({
+    conversationId: opts.conversationId,
+    channel: opts.channel,
+    role: opts.role,
+    content: opts.content,
+    meta: opts.meta ?? null,
+    createdAt: FieldValue.serverTimestamp(),
+  });
+
+  // Speed-to-lead: stamp the first time Aria (the agent) contacts this lead,
+  // once, so reports can measure enquiry → first-response time. A transaction
+  // keeps two concurrent assistant turns from both writing it.
+  if (opts.role === "assistant") {
+    try {
+      await db.runTransaction(async (tx) => {
+        const snap = await tx.get(leadRef);
+        if (snap.exists && !snap.data()!.firstContactAt) {
+          tx.update(leadRef, {
+            firstContactAt: FieldValue.serverTimestamp(),
+            firstContactChannel: opts.channel,
+          });
+        }
+      });
+    } catch (e) {
+      console.error("[leads] firstContactAt stamp failed:", e);
+    }
+  }
 }
 
 export function dbOrNull(): Firestore | null {

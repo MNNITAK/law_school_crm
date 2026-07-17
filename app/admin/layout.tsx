@@ -16,6 +16,7 @@ const NAV = [
   { href: "/admin/sequences", label: "Sequences" },
   { href: "/admin/precedents", label: "Precedents" },
   { href: "/admin/reports", label: "Reports" },
+  { href: "/admin/insights", label: "Insights" },
 ];
 
 export default function AdminLayout({
